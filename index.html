@@ -1,1 +1,125 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b6e61"><meta name="apple-mobile-web-app-capable" content="yes"><title>Korak – Kroatisch A1</title><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="stylesheet" href="styles.css"></head><body><header><div><b>Korak</b><small>Kroatisch A1</small></div><div>⭐ <span id="xp">0</span> · 🔥 <span id="streak">1</span></div></header><main><section id="home" class="view active"><div class="hero"><h1>A1 Kroatisch</h1><p>20 Lektionen · 160 Wörter und Sätze · 20+ Aufgaben je Lektion</p><div class="daily"><b id="dueCount">0 Wiederholungen fällig</b><button id="reviewBtn">Wiederholen</button></div></div><div id="lessons"></div></section><section id="lesson" class="view"><div class="lessonTop"><button id="close">←</button><div class="bar"><div id="bar"></div></div><span id="counter"></span></div><article class="card"><p id="kind"></p><h2 id="prompt"></h2><button id="speak" class="speak">🔊 Kroatisch anhören</button><div id="answerArea"></div><div id="feedback" class="feedback hidden"></div><button id="check" class="primary" disabled>Prüfen</button><button id="next" class="primary hidden">Weiter</button></article></section><section id="done" class="view"><article class="card center"><h1>Odlično! 🎉</h1><p id="doneText"></p><button id="homeBtn" class="primary">Zum Lernpfad</button></article></section></main><script src="course-data.js"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b6e61">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Korak">
+<title>Korak – Kroatisch lernen</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="brand" data-screen="dashboard">
+    <img src="apple-touch-icon.png" alt="">
+    <span><b>Korak</b><small>Kroatisch lernen</small></span>
+  </button>
+  <div class="topStats"><span>🔥 <b id="streak">1</b></span><span>⭐ <b id="xp">0</b></span></div>
+</header>
+
+<main>
+<section id="dashboard" class="view active">
+  <article class="progressHero">
+    <div>
+      <p class="eyebrow light">Dein Fortschritt</p>
+      <h1>Weiter so! Jeder Schritt zählt.</h1>
+      <div class="heroStats">
+        <div class="progressRing" id="progressRing"><span id="progressPercent">0%</span></div>
+        <div class="heroNumbers">
+          <p><span>▣</span> Lektionen abgeschlossen <b id="doneLessons">0 / 20</b></p>
+          <p><span>★</span> Gesammelte XP <b id="heroXp">0</b></p>
+          <p><span>🔥</span> Aktuelle Serie <b id="heroStreak">1 Tag</b></p>
+        </div>
+      </div>
+    </div>
+    <div class="heroActions">
+      <button id="continueBtn" class="heroButton">Weiterlernen</button>
+    </div>
+  </article>
+
+  <section class="quickGrid">
+    <button class="quickCard" id="continueQuick"><span>▤</span><b>Weiterlernen</b><small>Letzte Lektion</small></button>
+    <button class="quickCard" id="dueQuick"><span>↻</span><b>Wiederholen</b><small id="dueQuickText">0 fällig</small></button>
+    <button class="quickCard" id="wrongQuick"><span>◉</span><b>Öfter falsch</b><small>Gezielt üben</small></button>
+    <button class="quickCard disabled"><span>☆</span><b>Erfolge</b><small>Später</small></button>
+    <button class="quickCard" id="statsQuick"><span>▥</span><b>Statistiken</b><small>Deine Daten</small></button>
+    <button class="quickCard disabled"><span>□</span><b>Tagesziel</b><small>Später</small></button>
+  </section>
+
+  <section class="panel">
+    <div class="panelTitle"><div><p class="eyebrow">Kurs auswählen</p><h2>Dein Sprachniveau</h2></div></div>
+    <div class="levelGrid">
+      <button class="levelCard activeLevel" data-level="A1">
+        <span class="levelCode">A1</span><b>Kroatisch A1</b><small>20 Lektionen</small>
+        <p>Grundlegende Alltagssituationen</p><div class="miniProgress"><div id="a1Progress"></div></div><strong id="a1Count">0 / 20</strong>
+      </button>
+      <button class="levelCard locked"><span class="levelCode">A2</span><b>Kroatisch A2</b><small>In Vorbereitung</small><p>Einfache Gespräche und Reisen</p><span class="lock">🔒</span></button>
+      <button class="levelCard locked"><span class="levelCode">B1</span><b>Kroatisch B1</b><small>In Vorbereitung</small><p>Selbstständig im Alltag</p><span class="lock">🔒</span></button>
+      <button class="levelCard locked"><span class="levelCode">B2</span><b>Kroatisch B2</b><small>In Vorbereitung</small><p>Fließender und sicherer</p><span class="lock">🔒</span></button>
+      <button class="levelCard locked"><span class="levelCode">C1</span><b>Kroatisch C1</b><small>In Vorbereitung</small><p>Komplexe Themen verstehen</p><span class="lock">🔒</span></button>
+    </div>
+  </section>
+
+  <section class="dashboardColumns">
+    <article class="panel wrongPanel">
+      <p class="eyebrow red">Öfter falsch beantwortet</p>
+      <h2>Gezielt wiederholen</h2>
+      <div id="wrongPreview"></div>
+      <button id="wrongPracticeBtn" class="dangerButton">Jetzt üben</button>
+    </article>
+    <article class="panel">
+      <p class="eyebrow">Deine Statistiken</p>
+      <h2>Lernübersicht</h2>
+      <div class="statRows">
+        <p><span>Richtige Antworten</span><b id="accuracy">–</b></p>
+        <p><span>Gelernte Begriffe</span><b id="learnedItems">0</b></p>
+        <p><span>Fällige Wiederholungen</span><b id="dueCountDashboard">0</b></p>
+        <p><span>Längste Serie</span><b id="bestStreak">1 Tag</b></p>
+      </div>
+    </article>
+  </section>
+</section>
+
+<section id="course" class="view">
+  <div class="courseHeader">
+    <button class="backButton" data-screen="dashboard">←</button>
+    <div><p class="eyebrow">Kurs</p><h1>A1 Kroatisch</h1></div>
+  </div>
+  <div class="courseHero"><p>20 Lektionen · 160 Wörter und Sätze · 20+ Aufgaben je Lektion</p>
+    <div class="daily"><b id="dueCount">0 Wiederholungen fällig</b><button id="reviewBtn">Wiederholen</button></div>
+  </div>
+  <div id="lessons"></div>
+</section>
+
+<section id="lesson" class="view">
+  <div class="lessonTop"><button id="close">←</button><div class="bar"><div id="bar"></div></div><span id="counter"></span></div>
+  <article class="card">
+    <p id="kind"></p><h2 id="prompt"></h2>
+    <button id="speak" class="speak">🔊 Kroatisch anhören</button>
+    <div id="answerArea"></div>
+    <div id="feedback" class="feedback hidden"></div>
+    <button id="check" class="primary" disabled>Prüfen</button>
+    <button id="next" class="primary hidden">Weiter</button>
+  </article>
+</section>
+
+<section id="done" class="view">
+  <article class="card center"><h1>Odlično! 🎉</h1><p id="doneText"></p><button id="homeBtn" class="primary">Zurück</button></article>
+</section>
+</main>
+
+<nav class="bottomNav">
+  <button data-screen="dashboard" class="active"><span>⌂</span>Start</button>
+  <button data-screen="course"><span>▤</span>Lektionen</button>
+  <button id="bottomWrong"><span>◉</span>Üben</button>
+  <button class="disabled"><span>☆</span>Erfolge</button>
+  <button id="bottomStats"><span>○</span>Profil</button>
+</nav>
+
+<script src="course-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

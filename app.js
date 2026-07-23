@@ -92,9 +92,15 @@ const SITUATIONS={
 ]
 };
 
-function load(){try{return Object.assign({xp:0,streak:1,completed:[],unlocked:1,items:{},lastStudy:null},JSON.parse(localStorage.getItem(KEY)))}catch{return {xp:0,streak:1,completed:[],unlocked:1,items:{},lastStudy:null}}}
+function load(){try{return Object.assign({xp:0,streak:1,bestStreak:1,completed:[],unlocked:1,items:{},lastStudy:null,total:0,correct:0,lastLesson:1},JSON.parse(localStorage.getItem(KEY)))}catch{return {xp:0,streak:1,bestStreak:1,completed:[],unlocked:1,items:{},lastStudy:null,total:0,correct:0,lastLesson:1}}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function show(id){["home","lesson","done"].forEach(v=>$("#"+v).classList.toggle("active",v===id));scrollTo(0,0)}
+function show(id){
+ ["dashboard","course","lesson","done"].forEach(v=>$("#"+v).classList.toggle("active",v===id));
+ document.querySelectorAll(".bottomNav [data-screen]").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));
+ if(id==="dashboard")renderDashboard();
+ if(id==="course")renderHome();
+ scrollTo(0,0)
+}
 function norm(s){return String(s).trim().toLocaleLowerCase("hr").replace(/[.!?,]/g,"").replace(/\s+/g," ")}
 function key(l,i){return l+"-"+i}
 function st(k){return state.items[k]||{box:0,due:0,seen:0,correct:0,wrong:0}}
@@ -121,7 +127,7 @@ function make(l){
  due().slice(0,4).forEach(it=>e.push({type:"choice-de",prompt:`Wiederholung: Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it}));
  return shuffle(e)
 }
-function startLesson(id){active=COURSE.find(l=>l.id===id);reviewMode=false;queue=make(active);pos=0;show("lesson");renderQ()}
+function startLesson(id){state.lastLesson=id;save();active=COURSE.find(l=>l.id===id);reviewMode=false;queue=make(active);pos=0;show("lesson");renderQ()}
 function startReview(){
  let d=due();if(!d.length)return alert("Heute ist noch keine Wiederholung fällig.");
  active=null;reviewMode=true;queue=shuffle(d.flatMap(it=>[
@@ -160,7 +166,7 @@ function retryFor(q){
 }
 function check(){
  if(checked)return;checked=true;
- let q=queue[pos],ok=norm(answer)===norm(q.answer);
+ let q=queue[pos],ok=norm(answer)===norm(q.answer);state.total=(state.total||0)+1;if(ok)state.correct=(state.correct||0)+1;
  if(ok){state.xp+=8;$("#feedback").className="feedback ok";$("#feedback").textContent="Richtig! +8 XP"}
  else{$("#feedback").className="feedback no";$("#feedback").textContent=`Richtig wäre: ${q.answer}`;queue.splice(Math.min(queue.length,pos+3),0,retryFor(q))}
  schedule(q.key,ok);save();renderHome();$("#check").classList.add("hidden");$("#next").classList.remove("hidden")
@@ -169,5 +175,50 @@ function finish(){
  if(!reviewMode&&active){if(!state.completed.includes(active.id)){state.completed.push(active.id);state.xp+=30}state.unlocked=Math.min(COURSE.length,Math.max(state.unlocked,active.id+1))}
  save();renderHome();$("#doneText").textContent=reviewMode?"Deine fälligen Wiederholungen sind erledigt.":"Du hast Wörter verstanden, selbst übersetzt und in kurzen Situationen angewendet.";show("done")
 }
-$("#check").onclick=check;$("#next").onclick=()=>{pos++;renderQ()};$("#close").onclick=()=>show("home");$("#homeBtn").onclick=()=>show("home");$("#reviewBtn").onclick=startReview;
-renderHome();if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));
+$("#check").onclick=check;$("#next").onclick=()=>{pos++;renderQ()};$("#close").onclick=()=>show("course");$("#homeBtn").onclick=()=>show("dashboard");$("#reviewBtn").onclick=startReview;
+
+function wrongItems(){
+ const rows=[];
+ COURSE.forEach(l=>l.items.forEach((it,i)=>{
+   const k=key(l.id,i),s=st(k);
+   if((s.wrong||0)>0)rows.push({...it,key:k,lessonId:l.id,wrong:s.wrong,seen:s.seen||0});
+ }));
+ return rows.sort((a,b)=>b.wrong-a.wrong);
+}
+function renderDashboard(){
+ const completed=state.completed.length,total=COURSE.length,p=Math.round(completed/total*100);
+ $("#xp").textContent=state.xp;$("#streak").textContent=state.streak;
+ $("#progressPercent").textContent=p+"%";$("#progressRing").style.setProperty("--p",p);
+ $("#doneLessons").textContent=`${completed} / ${total}`;$("#heroXp").textContent=state.xp;
+ $("#heroStreak").textContent=`${state.streak} Tag${state.streak===1?"":"e"}`;
+ $("#a1Progress").style.width=p+"%";$("#a1Count").textContent=`${completed} / ${total}`;
+ const d=due();$("#dueQuickText").textContent=d.length+" fällig";$("#dueCountDashboard").textContent=d.length;
+ $("#accuracy").textContent=state.total?Math.round((state.correct||0)/state.total*100)+"%":"–";
+ $("#learnedItems").textContent=Object.values(state.items).filter(x=>(x.seen||0)>0).length;
+ $("#bestStreak").textContent=`${Math.max(state.bestStreak||1,state.streak||1)} Tag${Math.max(state.bestStreak||1,state.streak||1)===1?"":"e"}`;
+ const preview=$("#wrongPreview"),wrong=wrongItems().slice(0,4);preview.innerHTML="";
+ if(!wrong.length){preview.innerHTML='<p class="emptyText">Noch keine häufig falsch beantworteten Begriffe.</p>'}
+ else wrong.forEach(w=>{const div=document.createElement("div");div.className="wrongItem";div.innerHTML=`<div><b>${w.hr}</b><small>${w.de} · ${w.wrong} Fehler</small></div><span>›</span>`;preview.appendChild(div)})
+ $("#wrongPracticeBtn").disabled=!wrong.length;
+}
+function startWrongPractice(){
+ const wrong=wrongItems();
+ if(!wrong.length)return alert("Noch keine häufig falsch beantworteten Fragen vorhanden.");
+ active=null;reviewMode=true;
+ queue=shuffle(wrong.flatMap(it=>[
+  {type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it},
+  {type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:it.key,item:it}
+ ]));
+ pos=0;show("lesson");renderQ()
+}
+document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>show(b.dataset.screen));
+$("#continueBtn").onclick=()=>startLesson(state.lastLesson||1);
+$("#continueQuick").onclick=()=>startLesson(state.lastLesson||1);
+$("#dueQuick").onclick=startReview;
+$("#wrongQuick").onclick=startWrongPractice;
+$("#wrongPracticeBtn").onclick=startWrongPractice;
+$("#bottomWrong").onclick=startWrongPractice;
+$("#statsQuick").onclick=()=>document.querySelector(".dashboardColumns").scrollIntoView({behavior:"smooth"});
+$("#bottomStats").onclick=()=>{show("dashboard");setTimeout(()=>document.querySelector(".dashboardColumns").scrollIntoView({behavior:"smooth"}),50)};
+
+show("dashboard");renderDashboard();renderHome();if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));

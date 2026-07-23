@@ -1,11 +1,16 @@
-# Korak A1 – Korrekturversion 3.1
+# Korak Dashboard Version 4
 
-Änderungen:
-- Bei Übersetzungen ins Kroatische bestehen alle Auswahlantworten aus kroatischen Ausdrücken.
-- Bei Übersetzungen ins Deutsche bestehen alle Auswahlantworten aus deutschen Bedeutungen.
-- Fehlerwiederholungen behalten die richtige Sprachrichtung.
-- Jede Lektion enthält nun kurze Anwendungssituationen.
-- Beispiele: auf Begrüßungen antworten, im Café bestellen, im Hotel reagieren oder nach dem Weg fragen.
-- Je nach Lektion gibt es nun ungefähr 22–27 Aufgaben.
+Neu:
+- eigener Startbildschirm
+- Fortschrittskarte
+- Schnellzugriffe
+- Auswahl der Sprachniveaus A1 bis C1
+- A1 ist aktiv, höhere Niveaus sind vorbereitet und gesperrt
+- Bereich für häufig falsch beantwortete Fragen
+- Statistikübersicht
+- schlichte Symbolkarten
+- bestehende Lektionen und Inhalte bleiben unverändert
 
-Diese Dateien vollständig in die oberste Ebene des GitHub-Repositories hochladen und die vorhandenen Dateien ersetzen.
+## Upload
+Alle Dateien aus diesem Ordner direkt in die oberste Ebene des GitHub-Repositories hochladen und bestehende Dateien ersetzen.
+Netlify veröffentlicht danach automatisch.
