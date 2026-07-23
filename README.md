@@ -1,21 +1,5 @@
-# Korak – professionelle PWA
+# Korak A1 Inhaltsversion
 
-## Funktionen
-- 5 Lerneinheiten mit 20 Aufgaben
-- Level-Freischaltung
-- XP, Herzen, Tagesziel und Serie
-- Fehlerliste und automatische Wiederholung
-- kroatische Sprachausgabe über das Gerät
-- lokale Fortschrittsspeicherung
-- installierbar auf iPhone/iPad
-- offlinefähig nach dem ersten Besuch
+20 Lektionen, 160 Wörter/Sätze, 20–24 Aufgaben pro Lektion, Hörübungen und Spaced Repetition nach 1, 3, 7, 14, 30, 60 und 90 Tagen.
 
-## Lokal testen
-Im Ordner:
-python3 -m http.server 8080
-
-Dann:
-http://localhost:8080
-
-## Veröffentlichen
-Den kompletten entpackten Ordner auf einen statischen Webhost hochladen, z. B. Netlify, Vercel oder GitHub Pages.
+Alle Dateien in die oberste Ebene des GitHub-Repositories hochladen und vorhandene Dateien ersetzen. Netlify veröffentlicht automatisch.
