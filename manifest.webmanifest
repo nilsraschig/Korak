@@ -1,0 +1,17 @@
+{
+  "name": "Korak – Kroatisch lernen",
+  "short_name": "Korak",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f8f6",
+  "theme_color": "#0b6e61",
+  "description": "Kroatisch lernen mit Levels, Audio und gezielten Wiederholungen.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
