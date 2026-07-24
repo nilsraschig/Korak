@@ -1,5 +1,5 @@
 {
-  "name": "Korak – Kroatisch A1 & A2",
+  "name": "Korak 6 – Kroatisch lernen",
   "short_name": "Korak",
   "start_url": "./",
   "display": "standalone",
@@ -22,5 +22,5 @@
       "type": "image/png"
     }
   ],
-  "description": "Kroatisch lernen mit strukturierten A1- und A2-Kursen"
+  "description": "Kroatisch lernen mit Lernpfad, Übungsmodus, Fortschritt und Erfolgen"
 }

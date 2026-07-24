@@ -1,139 +1,48 @@
-const DATA=window.KORAK_DATA,LESSONS=DATA.lessons,KEY="korak-v5",OLD_KEY="korak-a1-v3",DAY=86400000,INTERVALS=[0,1,3,7,14,30,60,90];
-let state=load(),active=null,queue=[],pos=0,answer="",checked=false,mode="lesson";
-const $=s=>document.querySelector(s),lessonById=id=>LESSONS.find(l=>l.id===id);
-function defaults(){return {xp:0,streak:1,bestStreak:1,completed:[],items:{},lastStudy:null,total:0,correct:0,lastLesson:"a1-1-1",selectedLevel:"A1"}}
-function load(){
- try{
-  const current=JSON.parse(localStorage.getItem(KEY)||"null");
-  if(current)return Object.assign(defaults(),current);
-  const old=JSON.parse(localStorage.getItem(OLD_KEY)||"null");
-  if(old){const s=Object.assign(defaults(),old);s.completed=(old.completed||[]).map(n=>`a1-${Math.floor((n-1)/5)+1}-${((n-1)%5)+1}`).filter(id=>lessonById(id));s.lastLesson=s.completed.at(-1)||"a1-1-1";localStorage.setItem(KEY,JSON.stringify(s));return s}
- }catch(e){}
- return defaults()
-}
+const DATA=window.KORAK_DATA,LESSONS=DATA.lessons,KEY="korak-v6",OLD_KEYS=["korak-v5","korak-a1-v3"],DAY=86400000,INTERVALS=[0,1,3,7,14,30,60,90];
+let state=load(),active=null,queue=[],pos=0,answer="",checked=false,mode="lesson",session={correct:0,total:0,dialogues:0,reviews:0,start:0};
+const $=s=>document.querySelector(s),lessonById=id=>LESSONS.find(l=>l.id===id),levelLessons=id=>LESSONS.filter(l=>l.level===id),chapterLessons=id=>LESSONS.filter(l=>l.chapterId===id&&!l.isTest);
+function defaults(){return {xp:0,streak:1,bestStreak:1,completed:[],items:{},lastStudy:null,lastLesson:"a1-1-1",selectedLevel:"A1",total:0,correct:0,testStars:{},studySeconds:0,daily:{date:"",exercises:0,reviews:0,dialogues:0}}}
+function load(){try{let cur=JSON.parse(localStorage.getItem(KEY)||"null");if(cur)return Object.assign(defaults(),cur);for(const k of OLD_KEYS){const old=JSON.parse(localStorage.getItem(k)||"null");if(old){const s=Object.assign(defaults(),old);if(k==="korak-a1-v3")s.completed=(old.completed||[]).map(n=>`a1-${Math.floor((n-1)/5)+1}-${((n-1)%5)+1}`).filter(lessonById);localStorage.setItem(KEY,JSON.stringify(s));return s}}}catch(e){}return defaults()}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function show(id){
- ["dashboard","course","lesson","done"].forEach(v=>$("#"+v).classList.toggle("active",v===id));
- document.querySelectorAll(".bottomNav [data-screen]").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));
- if(id==="dashboard")renderDashboard();if(id==="course")renderCourse();scrollTo(0,0)
-}
+function today(){return new Date().toISOString().slice(0,10)}
+function resetDaily(){if(state.daily.date!==today())state.daily={date:today(),exercises:0,reviews:0,dialogues:0}}
+function updateStreak(){const t=today();if(state.lastStudy===t)return;const y=new Date(Date.now()-DAY).toISOString().slice(0,10);state.streak=state.lastStudy===y?(state.streak||1)+1:1;state.bestStreak=Math.max(state.bestStreak||1,state.streak);state.lastStudy=t}
 function norm(s){return String(s||"").trim().toLocaleLowerCase("hr").replace(/[.!?,;:„“"']/g,"").replace(/\s+/g," ")}
 function itemKey(lid,i){return `${lid}-${i}`}
 function st(k){return state.items[k]||{box:0,due:0,seen:0,correct:0,wrong:0}}
-function schedule(k,ok){let s=st(k);s.seen++;if(ok){s.correct++;s.box=Math.min(INTERVALS.length-1,s.box+1)}else{s.wrong++;s.box=Math.max(0,s.box-2)}s.due=Date.now()+INTERVALS[s.box]*DAY;state.items[k]=s}
+function schedule(k,ok){const s=st(k);s.seen++;if(ok){s.correct++;s.box=Math.min(INTERVALS.length-1,s.box+1)}else{s.wrong++;s.box=Math.max(0,s.box-2)}s.due=Date.now()+INTERVALS[s.box]*DAY;state.items[k]=s}
 function learningLessons(){return LESSONS.filter(l=>!l.isTest)}
-function due(){let out=[];learningLessons().forEach(l=>l.items.forEach((it,i)=>{const k=itemKey(l.id,i),s=st(k);if(s.seen&&s.due<=Date.now())out.push({...it,key:k,lessonId:l.id})}));return out}
+function due(){const out=[];learningLessons().forEach(l=>l.items.forEach((it,i)=>{const k=itemKey(l.id,i),s=st(k);if(s.seen&&s.due<=Date.now())out.push({...it,key:k,lessonId:l.id})}));return out}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function pool(field){return [...new Set(learningLessons().flatMap(l=>l.items.map(x=>x[field])))]}
 function distract(cur,field){return shuffle(pool(field).filter(x=>x!==cur)).slice(0,3)}
-function levelLessons(level){return LESSONS.filter(l=>l.level===level)}
-function chapterLessons(chapterId){return LESSONS.filter(l=>l.chapterId===chapterId&&!l.isTest)}
-function chapterUnlocked(chapter,index){
- if(index===0)return true;
- const prev=DATA.levels.find(x=>x.id===chapter.level).chapters[index-1];
- return state.completed.includes(prev.testId)
-}
-function lessonUnlocked(lesson,chapter,index){
- if(!chapterUnlocked(chapter,index))return false;
- if(lesson.number===chapterLessons(chapter.id)[0].number)return true;
- const chapterAll=LESSONS.filter(l=>l.chapterId===chapter.id);
- const idx=chapterAll.findIndex(x=>x.id===lesson.id);
- return idx===0||state.completed.includes(chapterAll[idx-1].id)
-}
-function nextLesson(){
- const level=state.selectedLevel||"A1",list=levelLessons(level);
- return list.find(l=>!state.completed.includes(l.id)&&isUnlocked(l))||list[0]
-}
-function isUnlocked(l){
- const lev=DATA.levels.find(x=>x.id===l.level),ci=lev.chapters.findIndex(c=>c.id===l.chapterId),ch=lev.chapters[ci];
- return lessonUnlocked(l,ch,ci)
-}
-function renderDashboard(){
- const all=LESSONS.length,done=state.completed.filter(id=>lessonById(id)).length,p=Math.round(done/all*100);
- $("#xp").textContent=state.xp;$("#streak").textContent=state.streak;$("#progressPercent").textContent=p+"%";$("#progressRing").style.setProperty("--p",p);
- $("#doneLessons").textContent=`${done} / ${all}`;$("#heroXp").textContent=state.xp;$("#heroStreak").textContent=`${state.streak} Tag${state.streak===1?"":"e"}`;
- ["A1","A2"].forEach(level=>{const list=levelLessons(level),d=list.filter(l=>state.completed.includes(l.id)).length,lp=Math.round(d/list.length*100);$(`#${level.toLowerCase()}Progress`).style.width=lp+"%";$(`#${level.toLowerCase()}Count`).textContent=`${d} / ${list.length}`});
- document.querySelectorAll(".levelCard[data-level]").forEach(b=>b.classList.toggle("activeLevel",b.dataset.level===state.selectedLevel));
- const d=due();$("#dueQuickText").textContent=d.length+" fällig";$("#dueCountDashboard").textContent=d.length;
- $("#accuracy").textContent=state.total?Math.round((state.correct||0)/state.total*100)+"%":"–";$("#learnedItems").textContent=Object.values(state.items).filter(x=>x.seen>0).length;
- const bs=Math.max(state.bestStreak||1,state.streak||1);$("#bestStreak").textContent=`${bs} Tag${bs===1?"":"e"}`;
- const preview=$("#wrongPreview"),wrong=wrongItems().slice(0,4);preview.innerHTML=wrong.length?"":'<p>Noch keine häufig falsch beantworteten Begriffe.</p>';
- wrong.forEach(w=>{const div=document.createElement("div");div.className="wrongItem";div.innerHTML=`<div><b>${w.hr}</b><small>${w.de} · ${w.wrong} Fehler</small></div><span>›</span>`;preview.appendChild(div)});
- $("#wrongPracticeBtn").disabled=!wrong.length
-}
-function renderCourse(){
- const level=DATA.levels.find(x=>x.id===state.selectedLevel)||DATA.levels[0];
- $("#courseTitle").textContent=level.title;$("#courseDescription").textContent=`${level.chapters.length} Kapitel · ${levelLessons(level.id).length} Lektionen inklusive Kapiteltests`;
- $("#dueCount").textContent=due().length+" Wiederholungen fällig";
- const host=$("#chapters");host.innerHTML="";
- level.chapters.forEach((chapter,ci)=>{
-  const chapterAll=LESSONS.filter(l=>l.chapterId===chapter.id),completed=chapterAll.filter(l=>state.completed.includes(l.id)).length,locked=!chapterUnlocked(chapter,ci);
-  const section=document.createElement("section");section.className="chapter"+(locked?" chapterLocked":"");
-  section.innerHTML=`<div class="chapterHead"><div class="chapterIcon">${chapter.icon}</div><div><p class="eyebrow">Kapitel ${ci+1}</p><h2>${chapter.title}</h2><p>${chapter.description}</p></div><strong>${completed}/${chapterAll.length}</strong></div><div class="chapterProgress"><div style="width:${Math.round(completed/chapterAll.length*100)}%"></div></div><div class="lessonList"></div>`;
-  const list=section.querySelector(".lessonList");
-  chapterAll.forEach(l=>{
-   const unlocked=lessonUnlocked(l,chapter,ci),done=state.completed.includes(l.id),row=document.createElement("article");
-   row.className="unit"+(!unlocked?" locked":"")+(l.isTest?" testUnit":"");
-   row.innerHTML=`<div class="lessonSymbol">${l.isTest?"✓":chapter.icon}</div><div class="unitText"><h3>${l.title}</h3><p>${l.description}${l.isTest?" · ca. 30 gemischte Aufgaben":" · 20+ Aufgaben"}</p></div><button ${unlocked?"":"disabled"}>${done?"Wiederholen":l.isTest?"Test starten":"Starten"}</button>`;
-   row.querySelector("button").onclick=()=>startLesson(l.id);list.appendChild(row)
-  });
-  host.appendChild(section)
- })
-}
-function makeNormal(l){
- let e=[];
- l.items.forEach((it,i)=>{const k=itemKey(l.id,i);e.push({type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:k,item:it});e.push({type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:k,item:it})});
- [0,2,4,6].forEach(i=>{const it=l.items[i];e.push({type:"listen",prompt:"Hören und schreiben",answer:it.hr,spoken:it.hr,key:itemKey(l.id,i),item:it})});
- if(l.dialogue&&l.dialogue.length>=2){const a=l.dialogue[0][1],b=l.dialogue[1][1];e.push({type:"dialogue",prompt:`Dialog ergänzen:\nA: ${a}\nB: …`,answer:b,options:[b,...distract(b,"hr")],spoken:a,key:`dialog-${l.id}`,item:{hr:b,de:"Passende Antwort im Dialog"}})}
- due().slice(0,3).forEach(it=>e.push({type:"choice-de",prompt:`Wiederholung: Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it}));
- return shuffle(e)
-}
-function makeTest(l){
- const source=chapterLessons(l.chapterId),items=shuffle(source.flatMap(x=>x.items.map((it,i)=>({...it,key:itemKey(x.id,i)})))).slice(0,15);
- return shuffle(items.flatMap((it,i)=>i<8?[
-  {type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it},
-  {type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:it.key,item:it}
- ]:[
-  {type:"listen",prompt:"Hören und schreiben",answer:it.hr,spoken:it.hr,key:it.key,item:it},
-  {type:"choice-hr",prompt:`Welche kroatische Antwort bedeutet „${it.de}“?`,answer:it.hr,options:[it.hr,...distract(it.hr,"hr")],spoken:it.hr,key:it.key,item:it}
- ]))
-}
-function startLesson(id){
- const l=lessonById(id);if(!l||!isUnlocked(l))return;
- active=l;mode=l.isTest?"test":"lesson";state.lastLesson=id;state.selectedLevel=l.level;save();queue=l.isTest?makeTest(l):makeNormal(l);pos=0;show("lesson");renderQ()
-}
-function startReview(){
- const d=due();if(!d.length)return alert("Heute ist noch keine Wiederholung fällig.");
- active=null;mode="review";queue=shuffle(d.flatMap(it=>[{type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it},{type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:it.key,item:it}]));pos=0;show("lesson");renderQ()
-}
-function renderQ(){
- if(pos>=queue.length)return finish();checked=false;answer="";const q=queue[pos];
- $("#counter").textContent=`${pos+1}/${queue.length}`;$("#bar").style.width=(pos/queue.length*100)+"%";
- $("#prompt").textContent=q.type==="listen"?"Tippe auf Anhören und schreibe den kroatischen Ausdruck.":q.prompt;
- $("#kind").textContent=q.type==="choice-de"?"Kroatisch verstehen":q.type==="choice-hr"?"Ins Kroatische wählen":q.type==="dialogue"?"Dialog vervollständigen":q.type==="listen"?"Hören und schreiben":"Ins Kroatische übersetzen";
- const tip=$("#grammarTip");tip.className="grammarTip"+(active&&active.grammar&&pos===0?"":" hidden");tip.textContent=active&&active.grammar?"💡 "+active.grammar:"";
- $("#feedback").className="feedback hidden";$("#check").classList.remove("hidden");$("#next").classList.add("hidden");$("#check").disabled=true;$("#speak").onclick=()=>speak(q.spoken);
- const a=$("#answerArea");a.innerHTML="";
- if(["choice-de","choice-hr","dialogue"].includes(q.type)){shuffle(q.options).forEach(o=>{const b=document.createElement("button");b.className="choice";b.textContent=o;b.onclick=()=>{if(checked)return;answer=o;[...a.children].forEach(x=>x.classList.remove("selected"));b.classList.add("selected");$("#check").disabled=false};a.appendChild(b)})}
- else{const i=document.createElement("input");i.className="textInput";i.placeholder="Kroatische Antwort";i.autocomplete="off";i.oninput=()=>{answer=i.value;$("#check").disabled=!norm(answer)};i.onkeydown=e=>{if(e.key==="Enter"&&!$("#check").disabled)check()};a.appendChild(i);setTimeout(()=>i.focus(),50)}
-}
-function speak(t){if(!("speechSynthesis"in window))return;const u=new SpeechSynthesisUtterance(t);u.lang="hr-HR";u.rate=.78;const v=speechSynthesis.getVoices().find(x=>x.lang.toLowerCase().startsWith("hr"));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}
+function chapterUnlocked(chapter,index){if(index===0)return true;const lev=DATA.levels.find(x=>x.id===chapter.level),prev=lev.chapters[index-1];return state.completed.includes(prev.testId)}
+function lessonUnlocked(lesson,chapter,index){if(!chapterUnlocked(chapter,index))return false;const all=LESSONS.filter(l=>l.chapterId===chapter.id),idx=all.findIndex(x=>x.id===lesson.id);return idx===0||state.completed.includes(all[idx-1].id)}
+function isUnlocked(l){const lev=DATA.levels.find(x=>x.id===l.level),ci=lev.chapters.findIndex(c=>c.id===l.chapterId);return lessonUnlocked(l,lev.chapters[ci],ci)}
+function nextLesson(){const list=levelLessons(state.selectedLevel||"A1");return list.find(l=>!state.completed.includes(l.id)&&isUnlocked(l))||list.find(isUnlocked)||list[0]}
+function levelProgress(id){const list=levelLessons(id),done=list.filter(l=>state.completed.includes(l.id)).length;return {done,total:list.length,p:list.length?Math.round(done/list.length*100):0}}
+function show(id){["home","levels","practice","profile","achievements","lesson","done"].forEach(v=>$("#"+v).classList.toggle("active",v===id));document.querySelectorAll(".bottomNav [data-screen]").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));if(id==="home")renderHome();if(id==="levels")renderLevels();if(id==="practice")renderPractice();if(id==="profile")renderProfile();if(id==="achievements")renderAchievements();scrollTo(0,0)}
+function renderCommon(){resetDaily();$("#xp").textContent=state.xp;$("#streak").textContent=state.streak}
+function renderHome(){renderCommon();const done=state.completed.filter(lessonById).length,p=Math.round(done/LESSONS.length*100),next=nextLesson();$("#progressPercent").textContent=p+"%";$("#progressRing").style.setProperty("--p",p);$("#homeXp").textContent=state.xp;$("#homeStreak").textContent=`${state.streak} Tag${state.streak===1?"":"e"}`;$("#homeLessons").textContent=done;$("#continueTitle").textContent=next?next.title:"Alles geschafft";$("#continueMeta").textContent=next?`${next.level} · ${next.chapterTitle}`:"Wiederhole schwierige Inhalte";const ex=Math.min(20,state.daily.exercises),goal=Math.round((ex/20)*100);$("#dailyGoalLabel").textContent=`${ex} / 20 Übungen`;$("#dailyGoalBar").style.width=goal+"%";$("#goalExercises").textContent=state.daily.exercises>=20?"✓":"○";$("#goalReview").textContent=state.daily.reviews>=5?"✓":"○";$("#goalDialogue").textContent=state.daily.dialogues>=1?"✓":"○"}
+function renderLevels(){renderCommon();const host=$("#levelCards");host.innerHTML="";DATA.levels.forEach(level=>{const locked=!['A1','A2'].includes(level.id),pr=levelProgress(level.id),b=document.createElement("button");b.className="levelSelect"+(locked?" locked":"");b.innerHTML=`<span class="levelBadge">${level.id}</span><div><h2>${level.title}</h2><p>${locked?"In Vorbereitung":`${level.chapters.length} Kapitel · ${pr.total} Lektionen`}</p>${locked?"":`<div class="miniProgress"><div style="width:${pr.p}%"></div></div>`}</div><strong>${locked?"🔒":pr.p+"%"}</strong>`;if(!locked)b.onclick=()=>openLevel(level.id);host.appendChild(b)});$("#levelCards").classList.remove("hidden");$("#levelDetail").classList.add("hidden")}
+function openLevel(id){state.selectedLevel=id;save();$("#levelCards").classList.add("hidden");$("#levelDetail").classList.remove("hidden");renderCourse()}
+function renderCourse(){const level=DATA.levels.find(x=>x.id===state.selectedLevel)||DATA.levels[0];$("#courseTitle").textContent=level.title;$("#courseDescription").textContent=`${level.chapters.length} Kapitel · ${levelLessons(level.id).length} Lektionen inklusive Kapiteltests`;$("#dueCount").textContent=due().length+" Wiederholungen fällig";const host=$("#chapters");host.innerHTML="";level.chapters.forEach((chapter,ci)=>{const all=LESSONS.filter(l=>l.chapterId===chapter.id),completed=all.filter(l=>state.completed.includes(l.id)).length,locked=!chapterUnlocked(chapter,ci),section=document.createElement("section");section.className="chapter"+(locked?" chapterLocked":"");section.innerHTML=`<div class="chapterHead"><div class="chapterIcon">${chapter.icon}</div><div><p class="eyebrow">Kapitel ${ci+1}</p><h2>${chapter.title}</h2><p>${chapter.description}</p></div><strong>${completed}/${all.length}</strong></div><div class="chapterProgress"><div style="width:${Math.round(completed/all.length*100)}%"></div></div><div class="lessonList"></div>`;const list=section.querySelector(".lessonList");all.forEach(l=>{const unlocked=lessonUnlocked(l,chapter,ci),done=state.completed.includes(l.id),stars=state.testStars[l.id]||0,row=document.createElement("article");row.className="unit"+(!unlocked?" locked":"")+(l.isTest?" testUnit":"");row.innerHTML=`<div class="lessonSymbol">${l.isTest?"✓":chapter.icon}</div><div><h3>${l.title}</h3><p>${l.description}</p>${l.isTest&&stars?`<div class="stars">${"★".repeat(stars)}${"☆".repeat(3-stars)}</div>`:""}</div><button ${unlocked?"":"disabled"}>${done?"Wiederholen":l.isTest?"Test starten":"Starten"}</button>`;row.querySelector("button").onclick=()=>startLesson(l.id);list.appendChild(row)});host.appendChild(section)})}
+function wrongItems(){const rows=[];learningLessons().forEach(l=>l.items.forEach((it,i)=>{const k=itemKey(l.id,i),s=st(k);if(s.wrong>0)rows.push({...it,key:k,wrong:s.wrong,lessonId:l.id})}));return rows.sort((a,b)=>b.wrong-a.wrong)}
+function renderPractice(){renderCommon();const d=due(),w=wrongItems();$("#practiceDueCount").textContent=d.length?`${d.length} Aufgaben bereit`:"Heute nichts fällig";$("#practiceWrongCount").textContent=w.length?`${w.length} schwierige Begriffe`:"Noch keine Fehler";const host=$("#wrongList");host.innerHTML=w.length?"":"<p>Noch keine schwierigen Begriffe. Das ist ein guter Anfang.</p>";w.slice(0,8).forEach(it=>{const div=document.createElement("div");div.className="wrongItem";div.innerHTML=`<div><b>${it.hr}</b><small>${it.de} · ${it.wrong} Fehler</small></div><span>›</span>`;host.appendChild(div)})}
+function renderProfile(){renderCommon();const completeChapters=DATA.levels.flatMap(l=>l.chapters).filter(c=>state.completed.includes(c.testId)).length,minutes=Math.round((state.studySeconds||0)/60);$("#profileAccuracy").textContent=state.total?Math.round(state.correct/state.total*100)+"%":"–";$("#profileLearned").textContent=Object.values(state.items).filter(x=>x.seen>0).length;$("#profileChapters").textContent=completeChapters;$("#profileBestStreak").textContent=state.bestStreak||1;$("#profileTime").textContent=minutes+" Min.";$("#profileXp").textContent=state.xp;const host=$("#profileLevels");host.innerHTML="";DATA.levels.filter(l=>['A1','A2'].includes(l.id)).forEach(l=>{const p=levelProgress(l.id),div=document.createElement("div");div.className="profileLevel";div.innerHTML=`<div class="profileLevelHead"><b>${l.title}</b><span>${p.done}/${p.total}</span></div><div class="miniProgress"><div style="width:${p.p}%"></div></div>`;host.appendChild(div)})}
+function achievementData(){const learned=Object.values(state.items).filter(x=>x.seen>0).length,chapters=DATA.levels.flatMap(l=>l.chapters).filter(c=>state.completed.includes(c.testId)).length;return [{icon:"👣",title:"Erster Korak",text:"Schließe deine erste Lektion ab",ok:state.completed.length>=1},{icon:"🔥",title:"7-Tage-Serie",text:"Lerne sieben Tage hintereinander",ok:state.bestStreak>=7},{icon:"📚",title:"100 Begriffe",text:"Trainiere 100 verschiedene Begriffe",ok:learned>=100},{icon:"⭐",title:"XP-Sammler",text:"Sammle 1.000 XP",ok:state.xp>=1000},{icon:"🏁",title:"Kapitel geschafft",text:"Bestehe deinen ersten Kapiteltest",ok:chapters>=1},{icon:"🌊",title:"A1 abgeschlossen",text:"Schließe den gesamten A1-Kurs ab",ok:levelProgress('A1').p===100},{icon:"🗣️",title:"Dialogstarter",text:"Trainiere deinen ersten Dialog",ok:(state.daily.dialogues||0)>0||Object.keys(state.items).some(k=>k.startsWith('dialog-'))},{icon:"🎯",title:"Treffsicher",text:"Erreiche mindestens 90 % Genauigkeit",ok:state.total>=20&&state.correct/state.total>=.9},{icon:"🏆",title:"Drei Sterne",text:"Erreiche drei Sterne in einem Kapiteltest",ok:Object.values(state.testStars).some(x=>x===3)}]}
+function renderAchievements(){renderCommon();const host=$("#achievementGrid");host.innerHTML="";achievementData().forEach(a=>{const div=document.createElement("article");div.className="achievement"+(a.ok?"":" locked");div.innerHTML=`<span>${a.icon}</span><h3>${a.title}</h3><p>${a.text}</p>`;host.appendChild(div)})}
+function makeNormal(l){let e=[];l.items.forEach((it,i)=>{const k=itemKey(l.id,i);e.push({type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:k,item:it});e.push({type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:k,item:it})});[0,2,4,6].filter(i=>l.items[i]).forEach(i=>{const it=l.items[i];e.push({type:"listen",prompt:"Hören und schreiben",answer:it.hr,spoken:it.hr,key:itemKey(l.id,i),item:it})});if(l.dialogue&&l.dialogue.length>=2){const a=l.dialogue[0][1],b=l.dialogue[1][1];e.push({type:"dialogue",prompt:`Dialog ergänzen:\nA: ${a}\nB: …`,answer:b,options:[b,...distract(b,"hr")],spoken:a,key:`dialog-${l.id}`,item:{hr:b,de:"Passende Antwort im Dialog"}})}due().slice(0,3).forEach(it=>e.push({type:"choice-de",prompt:`Wiederholung: Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it,isReview:true}));return shuffle(e)}
+function makeTest(l){const items=shuffle(chapterLessons(l.chapterId).flatMap(x=>x.items.map((it,i)=>({...it,key:itemKey(x.id,i)})))).slice(0,15);return shuffle(items.flatMap((it,i)=>i<8?[{type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it},{type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:it.key,item:it}]:[{type:"listen",prompt:"Hören und schreiben",answer:it.hr,spoken:it.hr,key:it.key,item:it},{type:"choice-hr",prompt:`Welche kroatische Antwort bedeutet „${it.de}“?`,answer:it.hr,options:[it.hr,...distract(it.hr,"hr")],spoken:it.hr,key:it.key,item:it}]))}
+function startSession(q,m,l=null){active=l;mode=m;queue=q;pos=0;session={correct:0,total:0,dialogues:0,reviews:0,start:Date.now()};show("lesson");renderQ()}
+function startLesson(id){const l=lessonById(id);if(!l||!isUnlocked(l))return;state.lastLesson=id;state.selectedLevel=l.level;save();startSession(l.isTest?makeTest(l):makeNormal(l),l.isTest?"test":"lesson",l)}
+function startReview(){const d=due();if(!d.length)return alert("Heute ist noch keine Wiederholung fällig.");startSession(shuffle(d.flatMap(it=>[{type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it,isReview:true},{type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:it.key,item:it,isReview:true}])),"review")}
+function startWrongPractice(){const w=wrongItems();if(!w.length)return alert("Noch keine häufig falsch beantworteten Fragen vorhanden.");startSession(shuffle(w.slice(0,20).flatMap(it=>[{type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it},{type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:it.key,item:it}])),"wrong")}
+function startRandom(){const unlocked=learningLessons().filter(isUnlocked),items=shuffle(unlocked.flatMap(l=>l.items.map((it,i)=>({...it,key:itemKey(l.id,i)})))).slice(0,10);if(!items.length)return;startSession(items.flatMap(it=>[{type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it},{type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:it.key,item:it}]),"random")}
+function showTests(){show("levels");openLevel(state.selectedLevel||"A1");setTimeout(()=>document.querySelector('.testUnit')?.scrollIntoView({behavior:'smooth'}),100)}
+function renderQ(){if(pos>=queue.length)return finish();checked=false;answer="";const q=queue[pos];$("#counter").textContent=`${pos+1}/${queue.length}`;$("#bar").style.width=(pos/queue.length*100)+"%";$("#prompt").textContent=q.type==="listen"?"Tippe auf Anhören und schreibe den kroatischen Ausdruck.":q.prompt;$("#kind").textContent=q.type==="choice-de"?"Kroatisch verstehen":q.type==="choice-hr"?"Ins Kroatische wählen":q.type==="dialogue"?"Dialog vervollständigen":q.type==="listen"?"Hören und schreiben":"Ins Kroatische übersetzen";const tip=$("#grammarTip");tip.className="grammarTip"+(active&&active.grammar&&pos===0?"":" hidden");tip.textContent=active&&active.grammar?"💡 "+active.grammar:"";$("#feedback").className="feedback hidden";$("#check").classList.remove("hidden");$("#next").classList.add("hidden");$("#check").disabled=true;$("#speak").onclick=()=>speak(q.spoken);const a=$("#answerArea");a.innerHTML="";if(["choice-de","choice-hr","dialogue"].includes(q.type)){shuffle(q.options).forEach(o=>{const b=document.createElement("button");b.className="choice";b.textContent=o;b.onclick=()=>{if(checked)return;answer=o;[...a.children].forEach(x=>x.classList.remove("selected"));b.classList.add("selected");$("#check").disabled=false};a.appendChild(b)})}else{const i=document.createElement("input");i.className="textInput";i.placeholder="Kroatische Antwort";i.autocomplete="off";i.oninput=()=>{answer=i.value;$("#check").disabled=!norm(answer)};i.onkeydown=e=>{if(e.key==="Enter"&&!$("#check").disabled)check()};a.appendChild(i);setTimeout(()=>i.focus(),50)}}
+function speak(t){if(!("speechSynthesis" in window))return;const u=new SpeechSynthesisUtterance(t);u.lang="hr-HR";u.rate=.78;const v=speechSynthesis.getVoices().find(x=>x.lang.toLowerCase().startsWith("hr"));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}
 function retryFor(q){if(q.type==="choice-de")return {...q,type:"input-hr",prompt:`Übersetze ins Kroatische: ${q.item.de}`,answer:q.item.hr,spoken:q.item.hr};return {...q,type:"choice-hr",prompt:`Welche kroatische Antwort bedeutet „${q.item.de}“?`,answer:q.item.hr,options:[q.item.hr,...distract(q.item.hr,"hr")],spoken:q.item.hr}}
-function check(){
- if(checked)return;checked=true;const q=queue[pos],ok=norm(answer)===norm(q.answer);state.total++;if(ok)state.correct++;
- if(ok){state.xp+=8;$("#feedback").className="feedback ok";$("#feedback").textContent="Richtig! +8 XP"}else{$("#feedback").className="feedback no";$("#feedback").textContent=`Richtig wäre: ${q.answer}`;queue.splice(Math.min(queue.length,pos+3),0,retryFor(q))}
- schedule(q.key,ok);save();$("#check").classList.add("hidden");$("#next").classList.remove("hidden")
-}
-function finish(){
- if(active){if(!state.completed.includes(active.id)){state.completed.push(active.id);state.xp+=active.isTest?60:30}}
- save();renderCourse();renderDashboard();$("#doneText").textContent=mode==="review"?"Deine fälligen Wiederholungen sind erledigt.":active&&active.isTest?"Kapiteltest abgeschlossen. Das nächste Kapitel ist jetzt freigeschaltet.":"Du hast neue Wörter, Hörübungen und eine praktische Situation trainiert.";show("done")
-}
-function wrongItems(){const rows=[];learningLessons().forEach(l=>l.items.forEach((it,i)=>{const k=itemKey(l.id,i),s=st(k);if(s.wrong>0)rows.push({...it,key:k,wrong:s.wrong})}));return rows.sort((a,b)=>b.wrong-a.wrong)}
-function startWrongPractice(){const wrong=wrongItems();if(!wrong.length)return alert("Noch keine häufig falsch beantworteten Fragen vorhanden.");active=null;mode="wrong";queue=shuffle(wrong.flatMap(it=>[{type:"choice-de",prompt:`Was bedeutet „${it.hr}“?`,answer:it.de,options:[it.de,...distract(it.de,"de")],spoken:it.hr,key:it.key,item:it},{type:"input-hr",prompt:`Übersetze ins Kroatische: ${it.de}`,answer:it.hr,spoken:it.hr,key:it.key,item:it}]));pos=0;show("lesson");renderQ()}
-document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>show(b.dataset.screen));
-document.querySelectorAll(".levelCard[data-level]").forEach(b=>b.onclick=()=>{state.selectedLevel=b.dataset.level;save();show("course")});
-$("#continueBtn").onclick=()=>startLesson((nextLesson()||{}).id);$("#continueQuick").onclick=()=>startLesson((nextLesson()||{}).id);
-$("#dueQuick").onclick=startReview;$("#reviewBtn").onclick=startReview;$("#wrongQuick").onclick=startWrongPractice;$("#wrongPracticeBtn").onclick=startWrongPractice;$("#bottomWrong").onclick=startWrongPractice;
-$("#statsQuick").onclick=()=>document.querySelector(".dashboardColumns").scrollIntoView({behavior:"smooth"});$("#bottomStats").onclick=()=>{show("dashboard");setTimeout(()=>document.querySelector(".dashboardColumns").scrollIntoView({behavior:"smooth"}),50)};
-$("#check").onclick=check;$("#next").onclick=()=>{pos++;renderQ()};$("#close").onclick=()=>show("course");$("#homeBtn").onclick=()=>show("course");
-show("dashboard");if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));
+function check(){if(checked)return;checked=true;const q=queue[pos],ok=norm(answer)===norm(q.answer);state.total++;session.total++;state.daily.exercises++;if(ok){state.correct++;session.correct++;state.xp+=8;$("#feedback").className="feedback ok";$("#feedback").textContent="Richtig! +8 XP"}else{$("#feedback").className="feedback no";$("#feedback").textContent=`Richtig wäre: ${q.answer}`;queue.splice(Math.min(queue.length,pos+3),0,retryFor(q))}if(q.type==="dialogue"){state.daily.dialogues++;session.dialogues++}if(q.isReview||mode==="review"){state.daily.reviews++;session.reviews++}schedule(q.key,ok);updateStreak();save();renderCommon();$("#check").classList.add("hidden");$("#next").classList.remove("hidden")}
+function finish(){state.studySeconds=(state.studySeconds||0)+Math.max(0,Math.round((Date.now()-session.start)/1000));let stars=0;if(active){if(!state.completed.includes(active.id)){state.completed.push(active.id);state.xp+=active.isTest?60:30}if(active.isTest){const rate=session.total?session.correct/session.total:0;stars=rate>=.9?3:rate>=.75?2:1;state.testStars[active.id]=Math.max(state.testStars[active.id]||0,stars)}}save();const pct=session.total?Math.round(session.correct/session.total*100):100;$("#doneText").textContent=mode==="review"?"Deine fälligen Wiederholungen sind erledigt.":active&&active.isTest?"Kapiteltest abgeschlossen. Das nächste Kapitel ist jetzt freigeschaltet.":"Du hast Wortschatz, Hörverständnis und praktische Situationen trainiert.";$("#doneScore").innerHTML=active&&active.isTest?`<div class="scoreStars">${"★".repeat(stars)}${"☆".repeat(3-stars)}</div><p>${pct}% richtig</p>`:`<p>${session.correct} von ${session.total} direkt richtig</p>`;show("done")}
+document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>show(b.dataset.screen));$("#continueBtn").onclick=()=>startLesson((nextLesson()||{}).id);$("#levelBack").onclick=renderLevels;$("#reviewBtn").onclick=startReview;$("#practiceDue").onclick=startReview;$("#practiceWrong").onclick=startWrongPractice;$("#practiceRandom").onclick=startRandom;$("#practiceTests").onclick=showTests;$("#check").onclick=check;$("#next").onclick=()=>{pos++;renderQ()};$("#close").onclick=()=>show(active?"levels":"practice");$("#homeBtn").onclick=()=>show("home");resetDaily();show("home");if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));
