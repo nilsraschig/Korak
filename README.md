@@ -1,6 +1,28 @@
-# Korak Version 5 – A1 & A2
+# Korak Version 7 – A1, A2 & B1-Einstieg
 
-## Neu in Version 5
+## Neu in Version 7
+- **Mehr Inhalt:** 5 neue A2-Kapitel (Verkehr & Unterwegs, Wohnung & Zuhause, Wetter & Jahreszeiten,
+  Einkaufen & Geld, Körper & Wohlbefinden) und ein neues Level **B1** mit 3 Kapiteln
+  (Meinungen & Diskussion, Beruf & Karriere, Medien & Gesellschaft).
+  Insgesamt 126 Lektionen inklusive 21 Kapiteltests, 840 Vokabeln/Sätze.
+- **Neue Übungstypen:** Paare verbinden, Lückentext, Satz bauen, Hörverständnis (Bedeutung wählen)
+  und „Was passt nicht?“. Aufgaben werden pro Begriff zufällig aus einem Pool gezogen.
+- **Wörterbuch-Widget:** Button „Aa“ unten rechts (in Lektionen oben rechts), sucht offline in
+  beide Richtungen durch den gesamten Kurswortschatz – auch mit Tippfehlern und ohne Akzente.
+- **Design:** Farb-/Radius-/Schatten-Tokens, Typografie-Skala, Übergänge und Feedback-Animationen,
+  Fokus-Modus in Lektionen, Tastatursteuerung (1–5, Enter).
+
+## Kursdaten prüfen
+Nach jeder Änderung an `course-data.js`:
+
+```
+node tools/validate-course.js
+```
+
+Das Skript prüft doppelte IDs, Nummerierung, Test-IDs und die Verknüpfung zwischen
+`levels[].chapters[].lessons` und dem flachen `lessons`-Array.
+
+## Frühere Version 5
 - Startbildschirm und Design aus Version 4 bleiben erhalten.
 - A1 ist jetzt in 6 übersichtliche Kapitel gegliedert.
 - A2 wurde mit 7 vollständigen Kapiteln ergänzt.
