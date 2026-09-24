@@ -1,4 +1,9 @@
-# Korak Version 7 – A1, A2 & B1-Einstieg
+# Korak Version 8 – A1, A2 & B1-Einstieg
+
+## Neu in Version 8
+- Komplett neues Design „Stein & Meer“ (siehe `DESIGN.md`): eigene Typografie, SVG-Icons statt Emojis,
+  Trittstein-Lernpfad, Treppe als Fortschritt, Dock-Navigation, Feedback-Blatt in Lektionen,
+  animierte Übergänge mit Rücksicht auf „Bewegung reduzieren“.
 
 ## Neu in Version 7
 - **Mehr Inhalt:** 5 neue A2-Kapitel (Verkehr & Unterwegs, Wohnung & Zuhause, Wetter & Jahreszeiten,
