@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#086b5c"><meta name="apple-mobile-web-app-capable" content="yes">
-<title>Korak 6 – Kroatisch lernen</title>
+<title>Korak 7 – Kroatisch lernen</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header class="topbar"><button class="brand" data-screen="home"><img src="apple-touch-icon.png" alt="Korak"><span><b>Korak</b><small>Version 6</small></span></button><div class="topStats"><span>🔥 <b id="streak">1</b></span><span>⭐ <b id="xp">0</b></span></div></header>
+<header class="topbar"><button class="brand" data-screen="home"><img src="apple-touch-icon.png" alt="Korak"><span><b>Korak</b><small>Version 7</small></span></button><div class="topStats"><span>🔥 <b id="streak">1</b></span><span>⭐ <b id="xp">0</b></span></div></header>
 <main>
 <section id="home" class="view active">
   <div class="welcome"><div><p class="eyebrow light">Dobro došao</p><h1>Dein nächster Schritt auf Kroatisch.</h1><p id="homeSubtitle">Heute zählt nur ein kleiner Fortschritt.</p></div><div class="progressRing" id="progressRing"><span id="progressPercent">0%</span></div></div>
@@ -28,7 +28,7 @@
 
 <section id="achievements" class="view"><div class="pageIntro"><p class="eyebrow">Erfolge</p><h1>Deine Meilensteine</h1><p>Jeder Erfolg wird automatisch anhand deines Lernfortschritts freigeschaltet.</p></div><div id="achievementGrid" class="achievementGrid"></div></section>
 
-<section id="lesson" class="view"><div class="lessonTop"><button id="close">←</button><div class="bar"><div id="bar"></div></div><span id="counter"></span></div><article class="card lessonCard"><p id="kind" class="eyebrow"></p><h2 id="prompt"></h2><div id="grammarTip" class="grammarTip hidden"></div><button id="speak" class="speak">🔊 Kroatisch anhören</button><div id="answerArea"></div><div id="feedback" class="feedback hidden"></div><button id="check" class="primary" disabled>Prüfen</button><button id="next" class="primary hidden">Weiter</button></article></section>
+<section id="lesson" class="view"><div class="lessonTop"><button id="close">←</button><div class="bar"><div id="bar"></div></div><span id="counter"></span><button class="lessonDict" data-dict-open aria-label="Wörterbuch öffnen" title="Wörterbuch (Strg+K)">Aa</button></div><article class="card lessonCard"><p id="kind" class="eyebrow"></p><h2 id="prompt"></h2><p id="promptHint" class="promptHint hidden"></p><div id="grammarTip" class="grammarTip hidden"></div><button id="speak" class="speak">🔊 Kroatisch anhören</button><div id="answerArea"></div><div id="feedback" class="feedback hidden"></div><button id="check" class="primary" disabled>Prüfen</button><button id="next" class="primary hidden">Weiter</button></article></section>
 <section id="done" class="view"><article class="card center doneCard"><div class="doneEmoji">🎉</div><h1>Odlično!</h1><p id="doneText"></p><div id="doneScore"></div><button id="homeBtn" class="primary">Zur Übersicht</button></article></section>
 </main>
 <nav class="bottomNav"><button data-screen="home" class="active"><span>⌂</span>Start</button><button data-screen="levels"><span>▤</span>Levels</button><button data-screen="practice"><span>◎</span>Üben</button><button data-screen="profile"><span>○</span>Profil</button><button data-screen="achievements"><span>☆</span>Erfolge</button></nav>

@@ -188,6 +188,8 @@
   const isOpen = () => !panel.hidden && panel.classList.contains("show");
 
   fab.onclick = () => (isOpen() ? close() : open());
+  // Weitere Auslöser, z. B. der „Aa“-Button im Kopf einer Lektion
+  document.addEventListener("click", e => { if (e.target.closest("[data-dict-open]")) isOpen() ? close() : open(); });
   panel.querySelector(".dictClose").onclick = close;
   input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(run, 90); });
   panel.querySelectorAll(".dictModes button").forEach(b => b.onclick = () => {
@@ -200,7 +202,7 @@
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); isOpen() ? close() : open(); }
   });
   document.addEventListener("pointerdown", e => {
-    if (isOpen() && !panel.contains(e.target) && !fab.contains(e.target)) close();
+    if (isOpen() && !panel.contains(e.target) && !fab.contains(e.target) && !e.target.closest("[data-dict-open]")) close();
   });
 
   // Für Tests/Debugging erreichbar
