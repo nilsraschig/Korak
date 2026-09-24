@@ -7,20 +7,8 @@
   Insgesamt 126 Lektionen inklusive 21 Kapiteltests, 840 Vokabeln/Sätze.
 - **Neue Übungstypen:** Paare verbinden, Lückentext, Satz bauen, Hörverständnis (Bedeutung wählen)
   und „Was passt nicht?“. Aufgaben werden pro Begriff zufällig aus einem Pool gezogen.
-- **Wörterbuch-Widget:** Button „Aa“ unten rechts (in Lektionen oben rechts), sucht offline in
-  beide Richtungen durch den gesamten Kurswortschatz – auch mit Tippfehlern und ohne Akzente.
 - **Design:** Farb-/Radius-/Schatten-Tokens, Typografie-Skala, Übergänge und Feedback-Animationen,
   Fokus-Modus in Lektionen, Tastatursteuerung (1–5, Enter).
-
-## Kursdaten prüfen
-Nach jeder Änderung an `course-data.js`:
-
-```
-node tools/validate-course.js
-```
-
-Das Skript prüft doppelte IDs, Nummerierung, Test-IDs und die Verknüpfung zwischen
-`levels[].chapters[].lessons` und dem flachen `lessons`-Array.
 
 ## Frühere Version 5
 - Startbildschirm und Design aus Version 4 bleiben erhalten.
