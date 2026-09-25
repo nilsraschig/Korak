@@ -1,4 +1,10 @@
-# Korak Version 8 – A1, A2 & B1-Einstieg
+# Korak Version 9 – A1, A2 & B1-Einstieg
+
+## Neu in Version 9
+- Helles blaues Design „Plavo more“ mit mehr Bewegung: wanderndes Licht, Wellen, Ripple-Effekt,
+  Partikel und XP-Anzeige bei richtigen Antworten, Konfetti am Lektionsende.
+- Kroatische Aussprache: automatische Wahl der besten kroatischen Stimme (Ausweich auf Bosnisch/Serbisch),
+  Langsam-Taste, Stimme und Tempo unter Profil › Aussprache, Installationshilfe bei fehlender Stimme.
 
 ## Neu in Version 8
 - Komplett neues Design „Stein & Meer“ (siehe `DESIGN.md`): eigene Typografie, SVG-Icons statt Emojis,
