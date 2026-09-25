@@ -598,3 +598,32 @@ details.culture p{padding:0 0 14px;line-height:1.55}
 .cultureLabel{font-size:var(--t-sm);font-weight:700;color:var(--gold)}
 .cultureCard h3{font-size:var(--t-lg);color:inherit}
 .cultureCard p{line-height:1.55}
+
+/* ---------- Lebensnahe Übungstypen: Rollenspiel, Szenario, Fehler-Korrektur ---------- */
+.lessonCard[data-type=roleplay] h2,.lessonCard[data-type=scenario] h2{font-size:var(--t-xl);line-height:1.3}
+.chat{display:grid;gap:8px;margin-top:22px}
+.bubble{max-width:85%;padding:11px 15px;border-radius:18px;font-size:1.05rem;line-height:1.4;animation:rise .4s var(--ease) both}
+.bubble.npc{justify-self:start;border-bottom-left-radius:6px;background:var(--paper);border:1px solid var(--line)}
+.bubble.me{justify-self:end;border-bottom-right-radius:6px;background:var(--sea);color:#fff}
+.bubble.past{opacity:.6;font-size:.95rem}
+.ctx{margin:22px 0 0;padding:18px 20px;border-radius:var(--r-m);background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
+.ctx figcaption{font-weight:700;margin-bottom:10px}
+.ctx p{margin:3px 0}
+.ctx dl{margin:0;display:grid;gap:6px}
+.ctx dl div{display:flex;align-items:baseline;gap:8px}
+.ctx dl div::after{content:"";order:1;flex:1;border-bottom:1.5px dotted var(--line)}
+.ctx dt{order:0}
+.ctx dd{order:2;margin:0;font-variant-numeric:tabular-nums;font-weight:600}
+.ctx table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.ctx td{padding:6px 4px;border-top:1px solid var(--line-2)}
+.ctx td:first-child{font-weight:700}
+.ctx-sign{text-align:center;font-weight:600;letter-spacing:.02em}
+.fixSentence{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.fixWord{padding:10px 14px;border:1.5px dashed var(--line);border-radius:12px;background:var(--paper);font-size:1.05rem;transition:border-color .2s,background-color .2s,transform .15s var(--ease)}
+.fixWord:hover:not(:disabled){border-color:var(--sea)}
+.fixWord.picked{border-style:solid;border-color:var(--gold);background:#fbf3df}
+.fixWord.fixed{border-style:solid;border-color:var(--sea);background:var(--sea-tint);animation:pop .45s var(--spring)}
+.fixWord.wrongPick{border-style:solid;border-color:var(--red);background:var(--red-tint)}
+.fixOptions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:18px;animation:rise .35s var(--ease) both}
+.fixOptions span{color:var(--ink-2);font-weight:600;margin-right:4px}
+.chip.selected{border-color:var(--sea);background:var(--sea-wash)}
