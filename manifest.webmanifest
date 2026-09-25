@@ -3,8 +3,8 @@
   "short_name": "Korak",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f2f3f0",
-  "theme_color": "#f2f3f0",
+  "background_color": "#eef5fd",
+  "theme_color": "#eef5fd",
   "icons": [
     {
       "src": "icon-192.png",
