@@ -7,6 +7,9 @@ Dashboard › **SQL Editor** › *New query* › Inhalt von [`schema.sql`](schem
 Die letzte Abfrage muss für `profiles` und `progress` jeweils `rls_aktiv = true` zeigen.
 Das Skript kann gefahrlos erneut ausgeführt werden.
 
+**Kontrolle:** Danach [`check.sql`](check.sql) im SQL-Editor ausführen (nur lesend). Alle 14 Zeilen müssen in der
+Spalte `ok` `true` zeigen – geprüft werden Tabellen, RLS, Policies, Rechte, Trigger und Funktion.
+
 Was es anlegt:
 
 | Objekt | Zweck |
