@@ -1,10 +1,10 @@
 {
-  "name": "Korak 7 – Kroatisch lernen",
+  "name": "Korak – Kroatisch lernen",
   "short_name": "Korak",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f4f8f6",
-  "theme_color": "#0b6e61",
+  "background_color": "#f2f3f0",
+  "theme_color": "#f2f3f0",
   "icons": [
     {
       "src": "icon-192.png",
