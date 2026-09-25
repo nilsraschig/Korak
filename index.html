@@ -2,18 +2,20 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#eef5fd"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f3ede1"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Korak – Kroatisch lernen</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..800,0..100,0..1&family=Caveat:wght@500..700&family=Geist:wght@400..700&display=swap">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body class="booting">
-<div class="sky" aria-hidden="true"></div>
-<div class="splash" aria-hidden="true"><svg class="mark" viewBox="0 0 32 32"><rect x="2" y="20" width="8" height="10" rx="2"/><rect x="12" y="12" width="8" height="18" rx="2"/><rect x="22" y="4" width="8" height="26" rx="2"/></svg></div>
+<div class="paperGrain" aria-hidden="true"></div>
+<div class="splash" aria-hidden="true"><div class="mosaicLoader"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i><i style="--i:12"></i><i style="--i:13"></i><i style="--i:14"></i><i style="--i:15"></i><i style="--i:16"></i><i style="--i:17"></i><i style="--i:18"></i><i style="--i:19"></i><i style="--i:20"></i><i style="--i:21"></i><i style="--i:22"></i><i style="--i:23"></i><i style="--i:24"></i></div><p>korak</p></div>
 <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
   <defs>
+    <filter id="ink" x="-6%" y="-6%" width="112%" height="112%"><feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <filter id="paint" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="7" result="warp"/><feDisplacementMap in="SourceGraphic" in2="warp" scale="3.5" xChannelSelector="R" yChannelSelector="G" result="shape"/><feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="2" result="grain"/><feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.45 1.08" result="grainA"/><feComposite in="shape" in2="grainA" operator="in" result="textured"/><feMorphology in="shape" operator="erode" radius="1.2" result="inner"/><feComposite in="shape" in2="inner" operator="out" result="edge"/><feColorMatrix in="edge" type="matrix" values=".72 0 0 0 0  0 .72 0 0 0  0 0 .72 0 0  0 0 0 .55 0" result="edgeDark"/><feMerge><feMergeNode in="textured"/><feMergeNode in="edgeDark"/></feMerge></filter>
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></symbol>
     <symbol id="i-stairs" viewBox="0 0 24 24"><path d="M3.5 19.5h4.5v-4.5h4.5v-4.5h4.5V6h3.5"/></symbol>
     <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".6"/></symbol>
@@ -57,6 +59,12 @@
     <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></symbol>
     <symbol id="i-trend" viewBox="0 0 24 24"><path d="M4 17.5 9 12.5l4 3 7-8"/><path d="M15 7.5h5v5"/></symbol>
     <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 4.5h12.5V18a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2z"/><path d="M16.5 8.5h3.5V18a2 2 0 0 1-2 2"/><path d="M7.5 8.5h5.5M7.5 12h5.5M7.5 15.5h3.5"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></symbol>
+    <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="m11.5 12 8-8M16.5 7l2.5 2.5M14 9.5l2 2"/></symbol>
+    <symbol id="i-fish" viewBox="0 0 24 24"><path d="M3 12c3-4.5 7.5-6 11.5-4.5L19 5v14l-4.5-2.5C10.5 18 6 16.5 3 12z"/><circle cx="8" cy="11" r=".7"/></symbol>
+    <symbol id="i-stamp" viewBox="0 0 24 24"><path d="M9.5 3.5h5l-.8 7h-3.4z"/><path d="M5 14h14v3.5H5z"/><path d="M6.5 20.5h11"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
     <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14.5 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/><path d="M10 16.5 5.5 12 10 7.5"/><path d="M5.5 12h10"/></symbol>
     <symbol id="i-login" viewBox="0 0 24 24"><path d="M14.5 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/><path d="M10 7.5 14.5 12 10 16.5"/><path d="M4.5 12h10"/></symbol>
     <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M7.5 18.5a4 4 0 0 1-.6-8 5.5 5.5 0 0 1 10.6-.8 4.4 4.4 0 0 1 .2 8.8z"/><path d="m9.5 13.5 2 2 3.5-3.5"/></symbol>
@@ -64,7 +72,7 @@
 </svg>
 
 <header class="topbar">
-  <button class="brand" data-screen="home" aria-label="Korak – zur Startseite"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="20" width="8" height="10" rx="2"/><rect x="12" y="12" width="8" height="18" rx="2"/><rect x="22" y="4" width="8" height="26" rx="2"/></svg><span>korak</span></button>
+  <button class="brand" data-screen="home" aria-label="Korak – zur Startseite"><span class="tesserae" aria-hidden="true"><i></i><i></i><i></i></span><span>korak</span></button>
   <div class="topRight">
   <div class="accountWrap">
     <button id="accountBtn" class="accountBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="accountMenu"><span id="accountAvatar" class="accAvatar">?</span><span id="accountName" class="accName">Gast</span><span id="syncDot" class="syncDot" data-state="idle"></span></button>
@@ -85,7 +93,7 @@
 <section id="auth" class="view">
   <div class="authLayout">
     <div class="authIntro">
-      <svg class="authMark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="20" width="8" height="10" rx="2"/><rect x="12" y="12" width="8" height="18" rx="2"/><rect x="22" y="4" width="8" height="26" rx="2"/></svg>
+      <div class="authVala" id="authVala"></div>
       <p class="greeting">Dobro došli</p>
       <h1>Kroatisch lernen, Schritt für Schritt.</h1>
       <p>Mit einem Account bleibt dein Fortschritt dauerhaft gespeichert – auf dem Handy, am Laptop, überall.</p>
@@ -135,11 +143,22 @@
       <p class="heroMeta" id="continueMeta">A1, Kapitel 1</p>
       <button id="continueBtn" class="btn btnPrimary btnLarge"><svg class="ico"><use href="#i-play"/></svg><span>Weiterlernen</span></button>
     </div>
-    <figure class="staircase" aria-labelledby="stairCaption">
-      <div class="steps" id="steps"></div><div class="waves"><svg viewBox="0 0 500 34" preserveAspectRatio="none" aria-hidden="true"><path class="w2" d="M0 14 Q25 4 50 14 T100 14 T150 14 T200 14 T250 14 T300 14 T350 14 T400 14 T450 14 T500 14 V34 H0z"/></svg><svg viewBox="0 0 500 34" preserveAspectRatio="none" aria-hidden="true"><path class="w1" d="M0 14 Q25 4 50 14 T100 14 T150 14 T200 14 T250 14 T300 14 T350 14 T400 14 T450 14 T500 14 V34 H0z"/></svg></div>
-      <figcaption id="stairCaption"><b id="homeLessons">0</b> von <span id="homeTotal">0</span> Lektionen geschafft</figcaption>
-    </figure>
+    <div class="scene" id="scene" aria-hidden="true">
+      <span class="layer sun"></span>
+      <svg class="layer farIslands" viewBox="0 0 400 120" preserveAspectRatio="none"><path filter="url(#paint)" d="M0 98 C18 82 36 60 66 60 C92 60 104 80 126 78 C146 58 168 44 196 54 C220 62 236 84 252 96 L252 120 L0 120Z"/><path filter="url(#paint)" d="M266 100 C282 80 302 64 328 66 C350 68 360 56 378 62 C392 68 398 80 400 86 L400 120 L266 120Z"/></svg>
+      <svg class="layer seaBand" viewBox="0 0 400 120" preserveAspectRatio="none"><path filter="url(#paint)" d="M0 60 C40 50 80 70 120 60 C160 50 200 70 240 60 C280 50 320 70 360 60 C380 55 392 57 400 60 L400 120 L0 120Z"/><path class="foam" d="M20 78 q10 -6 20 0 t20 0 M150 90 q10 -6 20 0 t20 0 M290 80 q10 -6 20 0 t20 0"/></svg>
+      <div class="layer valaSpot"><p class="speech" id="valaSays"></p><div id="homeVala"></div></div>
+      <svg class="layer rock" viewBox="0 0 400 80" preserveAspectRatio="none"><path filter="url(#paint)" d="M60 80 C70 44 120 30 190 30 C270 30 330 42 350 80Z"/></svg>
+    </div>
   </div>
+
+  <section class="journey" aria-labelledby="journeyTitle">
+    <div class="journeyHead"><h2 id="journeyTitle">Put uz obalu</h2><span id="journeyLabel">Station 1 von 27</span></div>
+    <div class="journeyTrack" id="journeyTrack"></div>
+    <p class="journeyNext" id="journeyNext"></p>
+  </section>
+
+  <div class="mosaicRule" aria-hidden="true"></div>
 
   <div class="homeLower">
     <section class="today">
@@ -151,24 +170,28 @@
         <li id="goalDialogue"><span class="goalDot"><svg class="ico"><use href="#i-check"/></svg></span><div><b>1 Dialog</b><small>Eine echte Situation üben</small></div></li>
       </ul>
     </section>
-    <dl class="figures">
-      <div><dt>Lernserie</dt><dd id="homeStreak">1 Tag</dd></div>
-      <div><dt>Erfahrungspunkte</dt><dd id="homeXp">0</dd></div>
-      <div><dt>Genauigkeit</dt><dd id="homeAccuracy">–</dd></div>
-    </dl>
+    <div class="homeSide">
+      <button class="bagPreview" data-screen="achievements"><span class="bagTitle">Valas Tasche</span><span class="bagItems" id="bagItems"></span><span class="bagCount" id="bagCount"></span></button>
+      <dl class="figures">
+        <div><dt>Lernserie</dt><dd id="homeStreak">1 Tag</dd></div>
+        <div><dt>Erfahrungspunkte</dt><dd id="homeXp">0</dd></div>
+        <div><dt>Lektionen</dt><dd><span id="homeLessons">0</span> <small>von <span id="homeTotal">0</span></small></dd></div>
+        <div><dt>Genauigkeit</dt><dd id="homeAccuracy">–</dd></div>
+      </dl>
+    </div>
   </div>
 </section>
 
 <section id="levels" class="view">
-  <div class="pageIntro"><h1>Lernpfad</h1><p>Wähle ein Level. Jedes Kapitel endet mit einem kurzen Test, der das nächste freischaltet.</p></div>
+  <div class="pageIntro"><h1>Put uz obalu</h1><p>Eine Reise entlang der Küste, von Poreč bis Dubrovnik. Jeder Ort ist ein Kapitel, und jeder Kapiteltest bringt Vala eine Station weiter.</p></div>
   <div id="levelCards" class="levelList"></div>
   <div id="levelDetail" class="hidden">
     <div class="courseHeader">
       <button id="levelBack" class="iconBtn" aria-label="Zurück zur Levelauswahl"><svg class="ico"><use href="#i-back"/></svg></button>
       <div><h1 id="courseTitle"></h1><p id="courseDescription"></p></div>
     </div>
-    <div class="dueBar"><span id="dueCount">0 Wiederholungen fällig</span><button id="reviewBtn" class="btn btnQuiet"><svg class="ico"><use href="#i-repeat"/></svg><span>Wiederholen</span></button></div>
-    <div id="chapters"></div>
+    <div class="routeLayout"><div class="coastHost" id="coastHost"></div><div class="routeChapters"><div class="dueBar"><span id="dueCount">0 Wiederholungen fällig</span><button id="reviewBtn" class="btn btnQuiet"><svg class="ico"><use href="#i-repeat"/></svg><span>Wiederholen</span></button></div>
+    <div id="chapters"></div></div></div>
   </div>
 </section>
 
@@ -211,10 +234,13 @@
     <div id="voiceStatus" class="voiceStatus"></div>
     <button id="voiceTest" class="btn btnQuiet"><svg class="ico"><use href="#i-sound"/></svg><span>Probehören</span></button>
   </section>
+  <section class="block soundBlock"><h2>Klänge</h2>
+    <label class="switchRow"><span><b>Wellen, Möwen und Töne</b><small>Leise Klangakzente bei Antworten und auf der Karte. Nur auf diesem Gerät gespeichert.</small></span><input type="checkbox" id="soundToggle" class="switch" role="switch"></label>
+  </section>
 </section>
 
 <section id="achievements" class="view">
-  <div class="pageIntro"><h1>Erfolge</h1><p>Sie schalten sich automatisch frei, während du lernst.</p></div>
+  <div class="souvenirIntro"><div id="souvenirVala" class="souvenirVala"></div><div class="pageIntro"><h1>Valas Souvenirs</h1><p>Unterwegs sammelt Vala kleine Andenken. Jedes steht für einen Meilenstein deiner Reise.</p></div></div>
   <p class="achieveCount" id="achieveCount"></p>
   <div id="achievementGrid" class="achievementList"></div>
 </section>
@@ -224,6 +250,7 @@
     <button id="close" class="iconBtn" aria-label="Lektion verlassen"><svg class="ico"><use href="#i-close"/></svg></button>
     <div class="bar" role="progressbar" aria-label="Fortschritt"><div id="bar"></div></div>
     <span id="counter"></span>
+    <button class="iconBtn lessonDict" data-dict-open aria-label="Wörterbuch öffnen" title="Wörterbuch (Strg+K)">Aa</button>
   </div>
   <article class="lessonCard">
     <p id="kind" class="kind"></p>
@@ -233,9 +260,9 @@
     <div id="speakRow" class="speakRow"><button id="speak" class="btn btnQuiet speak"><svg class="ico"><use href="#i-sound"/></svg><span>Anhören</span></button><button id="speakSlow" class="btn btnQuiet speak slow"><svg class="ico"><use href="#i-sound"/></svg><span>Langsam</span></button></div>
     <div id="answerArea"></div>
   </article>
-  <div class="actionSheet" id="sheet">
+  <div class="actionSheet" id="sheet"><svg class="fbWave" viewBox="0 0 800 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 C60 10 120 50 200 30 C280 10 340 50 400 30 C460 10 520 50 600 30 C680 10 740 50 800 30 V60 H0Z"/></svg>
     <div class="sheetInner">
-      <div id="feedback" class="feedback hidden"><div class="fbIcon"><svg class="ico"><use href="#i-check"/></svg></div><div><b id="fbTitle"></b><p id="fbText"></p></div></div>
+      <div id="feedback" class="feedback hidden"><div class="fbIcon"><svg class="ico"><use href="#i-check"/></svg></div><div class="fbVala" id="fbVala"></div><div><b id="fbTitle"></b><p id="fbText"></p></div></div>
       <button id="check" class="btn btnPrimary btnLarge" disabled>Prüfen</button>
       <button id="next" class="btn btnPrimary btnLarge hidden">Weiter</button>
     </div>
@@ -244,10 +271,12 @@
 
 <section id="done" class="view">
   <div class="doneWrap">
-    <svg class="doneMark" viewBox="0 0 120 80" aria-hidden="true"><path class="doneSteps" d="M6 74h28V52h28V30h28V8h24"/></svg>
+    <div class="doneVala" id="doneVala"></div>
     <h1 id="doneTitle">Odlično.</h1>
     <p id="doneText"></p>
     <div id="doneScore" class="doneScore"></div>
+    <p id="doneSouvenir" class="doneSouvenir hidden"></p>
+    <aside id="doneCulture" class="culture cultureCard hidden"><span class="cultureLabel">Wusstest du?</span><h3 id="cultureTitle"></h3><p id="cultureText"></p></aside>
     <button id="homeBtn" class="btn btnPrimary btnLarge">Zur Übersicht</button>
   </div>
 </section>
@@ -264,13 +293,13 @@
 <nav class="dock" aria-label="Hauptnavigation">
   <span class="dockPill" aria-hidden="true"></span>
   <button data-screen="home" class="active"><svg class="ico"><use href="#i-home"/></svg><span>Start</span></button>
-  <button data-screen="levels"><svg class="ico"><use href="#i-stairs"/></svg><span>Lernpfad</span></button>
+  <button data-screen="levels"><svg class="ico"><use href="#i-map"/></svg><span>Reise</span></button>
   <button data-screen="practice"><svg class="ico"><use href="#i-target"/></svg><span>Üben</span></button>
   <button data-screen="profile"><svg class="ico"><use href="#i-user"/></svg><span>Profil</span></button>
-  <button data-screen="achievements"><svg class="ico"><use href="#i-award"/></svg><span>Erfolge</span></button>
+  <button data-screen="achievements"><svg class="ico"><use href="#i-bag"/></svg><span>Souvenirs</span></button>
 </nav>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
 <script src="cloud.js"></script>
-<script src="course-data.js"></script><script src="app.js"></script><script src="account.js"></script>
+<script src="course-data.js"></script><script src="vala.js"></script><script src="coast.js"></script><script src="sound.js"></script><script src="culture-data.js"></script><script src="exercise-data.js"></script><script src="app.js"></script><script src="account.js"></script><script src="dictionary.js"></script>
 </body></html>
