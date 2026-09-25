@@ -57,6 +57,7 @@
     <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></symbol>
     <symbol id="i-trend" viewBox="0 0 24 24"><path d="M4 17.5 9 12.5l4 3 7-8"/><path d="M15 7.5h5v5"/></symbol>
     <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 4.5h12.5V18a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2z"/><path d="M16.5 8.5h3.5V18a2 2 0 0 1-2 2"/><path d="M7.5 8.5h5.5M7.5 12h5.5M7.5 15.5h3.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
     <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14.5 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/><path d="M10 16.5 5.5 12 10 7.5"/><path d="M5.5 12h10"/></symbol>
     <symbol id="i-login" viewBox="0 0 24 24"><path d="M14.5 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/><path d="M10 7.5 14.5 12 10 16.5"/><path d="M4.5 12h10"/></symbol>
     <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M7.5 18.5a4 4 0 0 1-.6-8 5.5 5.5 0 0 1 10.6-.8 4.4 4.4 0 0 1 .2 8.8z"/><path d="m9.5 13.5 2 2 3.5-3.5"/></symbol>
@@ -224,6 +225,7 @@
     <button id="close" class="iconBtn" aria-label="Lektion verlassen"><svg class="ico"><use href="#i-close"/></svg></button>
     <div class="bar" role="progressbar" aria-label="Fortschritt"><div id="bar"></div></div>
     <span id="counter"></span>
+    <button class="iconBtn lessonDict" data-dict-open aria-label="Wörterbuch öffnen" title="Wörterbuch (Strg+K)">Aa</button>
   </div>
   <article class="lessonCard">
     <p id="kind" class="kind"></p>
@@ -272,5 +274,5 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
 <script src="cloud.js"></script>
-<script src="course-data.js"></script><script src="app.js"></script><script src="account.js"></script>
+<script src="course-data.js"></script><script src="app.js"></script><script src="account.js"></script><script src="dictionary.js"></script>
 </body></html>

@@ -545,3 +545,43 @@ main{max-width:1080px;margin:0 auto;padding:24px var(--gutter) 140px}
   .dialogActions .btn{width:100%}
 }
 @media (max-width:380px){.accName{display:none}.accountBtn{padding-right:8px}}
+
+/* ---------- Wörterbuch-Widget HR ⇄ DE ---------- */
+.dictFab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(100px + env(safe-area-inset-bottom));z-index:45;display:grid;place-items:center;align-content:center;width:54px;height:54px;border:0;border-radius:18px;background:var(--sea);color:#fff;box-shadow:0 12px 26px -8px rgba(15,37,64,.45);transition:transform .2s var(--ease),background-color .2s}
+.dictFab span{font:700 1.1rem/1 var(--display)}
+.dictFab small{font-size:.5rem;font-weight:800;letter-spacing:.04em;opacity:.85;margin-top:2px}
+.dictFab:hover{transform:translateY(-2px)}
+.dictFab:active{transform:scale(.94)}
+.dictFab[aria-expanded="true"]{background:var(--sea-deep)}
+.inLesson .dictFab,.inAuth .dictFab,.booting .dictFab{display:none}
+.lessonDict{font:700 .85rem/1 var(--display);color:var(--sea)}
+.dict{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(166px + env(safe-area-inset-bottom));z-index:55;display:flex;flex-direction:column;width:min(400px,calc(100vw - 32px));max-height:min(560px,calc(100dvh - 240px));border:1px solid var(--line);border-radius:var(--r-l);background:var(--paper);box-shadow:0 24px 60px -16px rgba(15,37,64,.35);opacity:0;transform:translateY(12px) scale(.98);transform-origin:bottom right;transition:opacity .2s ease,transform .25s var(--ease)}
+.dict[hidden]{display:none}
+.dict.show{opacity:1;transform:none}
+.inLesson .dict{top:calc(max(16px,env(safe-area-inset-top)) + 56px);bottom:auto;max-height:calc(100dvh - 120px);transform-origin:top right}
+.dictHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:16px 16px 10px}
+.dictHead div{display:grid;gap:2px}
+.dictHead small{color:var(--mist);font-size:.78rem}
+.dictClose{display:grid;place-items:center;flex:none;width:34px;height:34px;border:0;border-radius:10px;background:var(--sea-wash);color:var(--ink-2)}
+.dictSearch{display:flex;align-items:center;gap:8px;margin:0 16px;padding:0 12px;border:1.5px solid var(--line);border-radius:var(--r-m);background:#fff;transition:border-color .15s,box-shadow .15s}
+.dictSearch:focus-within{border-color:var(--sea);box-shadow:0 0 0 4px var(--sea-tint)}
+.dictSearch .ico{color:var(--mist)}
+.dictSearch input{flex:1;min-width:0;padding:12px 0;border:0;outline:0;background:none;font:inherit;font-size:1rem;color:inherit}
+.dictModes{display:flex;gap:6px;padding:10px 16px}
+.dictModes button{flex:1;padding:7px 0;border:1px solid var(--line);border-radius:10px;background:none;color:var(--ink-2);font-size:.78rem;font-weight:700}
+.dictModes button.active{border-color:var(--sea);background:var(--sea-wash);color:var(--sea-deep)}
+.dictResults{overflow:auto;padding:0 8px 10px;overscroll-behavior:contain}
+.dictRow{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:12px}
+.dictRow:hover{background:var(--sea-wash)}
+.dictMain{display:grid;gap:1px;flex:1;min-width:0}
+.dictMain b{font-size:1.02rem}
+.dictDe{color:var(--ink-2)}
+.dictMain small{color:var(--mist);font-size:.74rem}
+.dictDir{font-size:.62rem;font-weight:800;letter-spacing:.06em;color:var(--sea)}
+.dictMain mark{background:#fbe7a6;color:inherit;border-radius:3px}
+.dictSpeak{display:grid;place-items:center;flex:none;width:38px;height:38px;border:0;border-radius:11px;background:var(--sea-tint);color:var(--sea-deep)}
+.dictHint{padding:10px 10px 14px;color:var(--ink-2);font-size:.92rem}
+.dictHint p{margin:0 0 10px}
+.dictExamples{display:flex;flex-wrap:wrap;gap:6px}
+.dictExamples button{padding:6px 11px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--sea-deep);font-weight:700;font-size:.85rem}
+@media (max-width:560px){.dict{right:8px;left:8px;width:auto;bottom:calc(92px + env(safe-area-inset-bottom));max-height:calc(100dvh - 170px)}.dictFab{width:50px;height:50px;border-radius:16px;bottom:calc(92px + env(safe-area-inset-bottom))}}
