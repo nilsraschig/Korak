@@ -9,8 +9,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="booting">
 <div class="sky" aria-hidden="true"></div>
+<div class="splash" aria-hidden="true"><svg class="mark" viewBox="0 0 32 32"><rect x="2" y="20" width="8" height="10" rx="2"/><rect x="12" y="12" width="8" height="18" rx="2"/><rect x="22" y="4" width="8" height="26" rx="2"/></svg></div>
 <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></symbol>
@@ -56,19 +57,77 @@
     <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></symbol>
     <symbol id="i-trend" viewBox="0 0 24 24"><path d="M4 17.5 9 12.5l4 3 7-8"/><path d="M15 7.5h5v5"/></symbol>
     <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 4.5h12.5V18a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2z"/><path d="M16.5 8.5h3.5V18a2 2 0 0 1-2 2"/><path d="M7.5 8.5h5.5M7.5 12h5.5M7.5 15.5h3.5"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14.5 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/><path d="M10 16.5 5.5 12 10 7.5"/><path d="M5.5 12h10"/></symbol>
+    <symbol id="i-login" viewBox="0 0 24 24"><path d="M14.5 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/><path d="M10 7.5 14.5 12 10 16.5"/><path d="M4.5 12h10"/></symbol>
+    <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M7.5 18.5a4 4 0 0 1-.6-8 5.5 5.5 0 0 1 10.6-.8 4.4 4.4 0 0 1 .2 8.8z"/><path d="m9.5 13.5 2 2 3.5-3.5"/></symbol>
   </defs>
 </svg>
 
 <header class="topbar">
   <button class="brand" data-screen="home" aria-label="Korak – zur Startseite"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="20" width="8" height="10" rx="2"/><rect x="12" y="12" width="8" height="18" rx="2"/><rect x="22" y="4" width="8" height="26" rx="2"/></svg><span>korak</span></button>
+  <div class="topRight">
+  <div class="accountWrap">
+    <button id="accountBtn" class="accountBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="accountMenu"><span id="accountAvatar" class="accAvatar">?</span><span id="accountName" class="accName">Gast</span><span id="syncDot" class="syncDot" data-state="idle"></span></button>
+    <div id="accountMenu" class="accountMenu" role="menu" hidden>
+      <div class="menuHead"><b id="menuName">Ohne Account</b><small id="accountSync">Nur auf diesem Gerät gespeichert</small></div>
+      <button id="menuLogin" class="menuItem" role="menuitem"><svg class="ico"><use href="#i-login"/></svg><span>Anmelden oder registrieren</span></button>
+      <button id="menuLogout" class="menuItem hidden" role="menuitem"><svg class="ico"><use href="#i-logout"/></svg><span>Abmelden</span></button>
+    </div>
+  </div>
   <div class="topStats">
     <span class="stat" title="Lernserie in Tagen"><svg class="ico"><use href="#i-flame"/></svg><b id="streak">1</b></span>
     <span class="stat" title="Erfahrungspunkte"><svg class="ico"><use href="#i-spark"/></svg><b id="xp">0</b></span>
   </div>
+  </div>
 </header>
 
 <main>
-<section id="home" class="view active">
+<section id="auth" class="view">
+  <div class="authLayout">
+    <div class="authIntro">
+      <svg class="authMark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="20" width="8" height="10" rx="2"/><rect x="12" y="12" width="8" height="18" rx="2"/><rect x="22" y="4" width="8" height="26" rx="2"/></svg>
+      <p class="greeting">Dobro došli</p>
+      <h1>Kroatisch lernen, Schritt für Schritt.</h1>
+      <p>Mit einem Account bleibt dein Fortschritt dauerhaft gespeichert – auf dem Handy, am Laptop, überall.</p>
+    </div>
+    <div class="authCard">
+      <div class="authTabs" role="tablist" aria-label="Anmelden oder registrieren">
+        <button type="button" role="tab" data-tab="signin" class="active" aria-selected="true">Anmelden</button>
+        <button type="button" role="tab" data-tab="signup" aria-selected="false">Registrieren</button>
+        <span class="tabPill" aria-hidden="true"></span>
+      </div>
+      <h2 id="authTitle">Willkommen zurück</h2>
+      <p id="authOffline" class="authNote warn hidden">Der Server ist gerade nicht erreichbar. Du kannst ohne Account weiterlernen und dich später anmelden.</p>
+      <form id="authForm" novalidate data-mode="signin">
+        <div class="field">
+          <label for="authUser">Username</label>
+          <div class="inputWrap"><input id="authUser" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="20" required aria-describedby="authUserHint"><span id="authUserOk" class="inputOk" aria-live="polite"></span></div>
+          <small id="authUserHint" class="fieldHint"></small>
+          <small class="fieldError" role="alert"></small>
+        </div>
+        <div class="field">
+          <div class="labelRow"><label for="authPass">Passwort</label><button type="button" id="togglePass" class="linkBtn" aria-pressed="false">Anzeigen</button></div>
+          <input id="authPass" name="password" type="password" autocomplete="current-password" required aria-describedby="authPassHint">
+          <small id="authPassHint" class="fieldHint"></small>
+          <small class="fieldError" role="alert"></small>
+        </div>
+        <div class="field hidden" id="confirmField">
+          <label for="authConfirm">Passwort bestätigen</label>
+          <input id="authConfirm" name="confirm" type="password" autocomplete="new-password">
+          <small class="fieldError" role="alert"></small>
+        </div>
+        <p id="authError" class="authNote warn hidden" role="alert"></p>
+        <button id="authSubmit" type="submit" class="btn btnPrimary btnLarge"><span>Anmelden</span></button>
+      </form>
+      <div class="authGuest">
+        <button id="guestBtn" type="button" class="btn btnQuiet">Ohne Account weitermachen</button>
+        <small>Dein Fortschritt bleibt dann nur auf diesem Gerät. Du kannst später jederzeit einen Account anlegen.</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="home" class="view">
   <div class="homeHero">
     <div class="heroText">
       <p class="greeting" id="greeting">Dobar dan</p>
@@ -126,8 +185,12 @@
 
 <section id="profile" class="view">
   <div class="profileHead">
-    <div class="monogram" aria-hidden="true">K</div>
-    <div><h1>Dein Fortschritt</h1><p>Alles wird lokal auf diesem Gerät gespeichert.</p></div>
+    <div class="monogram" id="profileMonogram" aria-hidden="true">K</div>
+    <div class="profileHeadText"><h1 id="profileTitle">Dein Fortschritt</h1><p id="profileSub">Alles wird lokal auf diesem Gerät gespeichert.</p></div>
+    <div class="profileActions">
+      <button id="profileLogout" class="btn btnQuiet hidden"><svg class="ico"><use href="#i-logout"/></svg><span>Abmelden</span></button>
+      <button id="profileSignup" class="btn btnPrimary hidden"><svg class="ico"><use href="#i-cloud-check"/></svg><span>Account erstellen</span></button>
+    </div>
   </div>
   <div class="profileGrid">
     <div class="bigFigure"><span>Genauigkeit</span><b id="profileAccuracy">–</b><small id="profileAnswers">Noch keine Antworten</small></div>
@@ -192,6 +255,12 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<dialog id="dialog" class="dialog" aria-labelledby="dialogTitle">
+  <h2 id="dialogTitle"></h2>
+  <p id="dialogText"></p>
+  <div class="dialogActions"><button id="dialogNo" class="btn btnQuiet"></button><button id="dialogYes" class="btn btnPrimary"></button></div>
+</dialog>
+
 <nav class="dock" aria-label="Hauptnavigation">
   <span class="dockPill" aria-hidden="true"></span>
   <button data-screen="home" class="active"><svg class="ico"><use href="#i-home"/></svg><span>Start</span></button>
@@ -200,5 +269,8 @@
   <button data-screen="profile"><svg class="ico"><use href="#i-user"/></svg><span>Profil</span></button>
   <button data-screen="achievements"><svg class="ico"><use href="#i-award"/></svg><span>Erfolge</span></button>
 </nav>
-<script src="course-data.js"></script><script src="app.js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
+<script src="cloud.js"></script>
+<script src="course-data.js"></script><script src="app.js"></script><script src="account.js"></script>
 </body></html>
