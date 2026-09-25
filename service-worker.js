@@ -1,4 +1,10 @@
-const CACHE="korak-v9-2026-09";const FILES=["./","./index.html","./styles.css","./app.js","./course-data.js","./manifest.webmanifest","./icon-192.png","./icon-512.png","./apple-touch-icon.png"];
+const CACHE="korak-v10-2026-09";
+const FILES=["./","./index.html","./styles.css","./config.js","./cloud.js","./app.js","./account.js","./course-data.js","./manifest.webmanifest","./icon-192.png","./icon-512.png","./apple-touch-icon.png"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener("fetch",e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{const copy=resp.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return resp}).catch(()=>caches.match("./index.html")))));
+self.addEventListener("fetch",e=>{
+  const req=e.request,url=new URL(req.url);
+  // Konto- und Fortschrittsdaten (Supabase) nie aus dem Cache bedienen – sonst käme veralteter Fortschritt zurück.
+  if(req.method!=="GET"||url.hostname.endsWith(".supabase.co")||url.pathname.startsWith("/auth/v1/")||url.pathname.startsWith("/rest/v1/"))return;
+  e.respondWith(caches.match(req).then(r=>r||fetch(req).then(resp=>{if(resp.ok||resp.type==="opaque"){const copy=resp.clone();caches.open(CACHE).then(c=>c.put(req,copy))}return resp}).catch(()=>req.mode==="navigate"?caches.match("./index.html"):Response.error())));
+});

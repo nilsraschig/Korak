@@ -1,4 +1,12 @@
-# Korak Version 9 – A1, A2 & B1-Einstieg
+# Korak Version 10 – A1, A2 & B1-Einstieg
+
+## Neu in Version 10: Konten
+- Registrierung und Login mit **Username + Passwort** (intern über Supabase Auth), Sitzung bleibt bis zum Abmelden.
+- Fortschritt wird bei jeder Änderung sofort in **Supabase** gespeichert und auf allen Geräten synchronisiert;
+  localStorage dient als Offline-Cache. Gleichzeitiges Lernen auf mehreren Geräten wird zusammengeführt.
+- Beim ersten Login wird angeboten, vorhandenen Gast-Fortschritt ins Konto zu übernehmen.
+- „Ohne Account weitermachen“ (Gastmodus) funktioniert wie bisher rein lokal.
+- Einrichtung: siehe [`supabase/README.md`](supabase/README.md); Zugangsdaten in `config.js`.
 
 ## Neu in Version 9
 - Helles blaues Design „Plavo more“ mit mehr Bewegung: wanderndes Licht, Wellen, Ripple-Effekt,

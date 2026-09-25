@@ -443,3 +443,105 @@ main{max-width:1080px;margin:0 auto;padding:24px var(--gutter) 140px}
 @keyframes fall{0%{transform:translate(0,0) rotate(0);opacity:1}85%{opacity:1}100%{transform:translate(var(--dx),108vh) rotate(var(--r));opacity:0}}
 @media (max-width:760px){.voiceFields{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.sky,.waves svg,.bar div::before{animation:none!important}}
+
+/* ---------- Start-Splash ---------- */
+.splash{position:fixed;inset:0;z-index:90;display:none;place-items:center;pointer-events:none}
+.booting .splash{display:grid}
+.booting .topbar,.booting .dock{visibility:hidden}
+.splash .mark{width:56px;height:56px;fill:var(--sea)}
+.splash .mark rect{transform-box:fill-box;transform-origin:bottom;animation:stepUp .9s var(--spring) infinite alternate}
+.splash .mark rect:nth-child(2){animation-delay:.12s}
+.splash .mark rect:nth-child(3){animation-delay:.24s}
+
+/* ---------- Konto in der Kopfzeile ---------- */
+.topRight{display:flex;align-items:center;gap:18px}
+.accountWrap{position:relative}
+.accountBtn{display:flex;align-items:center;gap:8px;max-width:190px;padding:4px 12px 4px 4px;border:1px solid var(--line);border-radius:999px;background:var(--paper);font-weight:600;transition:border-color .2s,box-shadow .2s,transform .2s var(--ease)}
+.accountBtn:hover{border-color:#b9cfe8;box-shadow:var(--shadow)}
+.accountBtn:active{transform:scale(.97)}
+.accAvatar{display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:50%;background:var(--sea);color:#fff;font:700 .9rem/1 var(--display)}
+.accountBtn.guest .accAvatar{background:var(--line);color:var(--ink-2)}
+.accName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.syncDot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--line)}
+.accountBtn.guest .syncDot{display:none}
+.syncDot[data-state=saved]{background:#3aa06a}
+.syncDot[data-state=saving]{background:var(--sea);animation:pulseDot 1s ease-in-out infinite}
+.syncDot[data-state=offline]{background:var(--gold)}
+.syncDot[data-state=error]{background:var(--red)}
+.accountMenu{position:absolute;right:0;top:calc(100% + 10px);z-index:60;min-width:250px;padding:8px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--paper);box-shadow:var(--shadow);opacity:0;transform:translateY(-6px) scale(.98);transform-origin:top right;transition:opacity .18s,transform .25s var(--ease)}
+.accountMenu.open{opacity:1;transform:none}
+.menuHead{display:grid;gap:2px;padding:10px 12px 12px;margin-bottom:6px;border-bottom:1px solid var(--line-2)}
+.menuHead small{color:var(--mist);font-size:var(--t-xs)}
+.menuItem{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:none;text-align:left;font-weight:500}
+.menuItem:hover,.menuItem:focus-visible{background:var(--sea-wash)}
+.menuItem .ico{color:var(--sea)}
+
+/* ---------- Anmeldebildschirm ---------- */
+.inAuth .topbar,.inAuth .dock{display:none}
+.inAuth main{padding-top:max(24px,env(safe-area-inset-top));padding-bottom:48px}
+.authLayout{display:grid;grid-template-columns:1fr minmax(0,440px);align-items:center;gap:clamp(32px,6vw,96px);min-height:calc(100dvh - 96px)}
+.authMark{width:56px;height:56px;fill:var(--sea);margin-bottom:28px}
+.authMark rect{transform-box:fill-box;transform-origin:bottom;animation:stepUp .9s var(--spring) both}
+.authMark rect:nth-child(2){animation-delay:.1s}
+.authMark rect:nth-child(3){animation-delay:.2s}
+.authIntro h1{font-size:var(--t-4xl);font-weight:750;max-width:12ch;margin-bottom:18px;text-wrap:balance}
+.authIntro>p:last-child{max-width:40ch;color:var(--ink-2);font-size:var(--t-lg)}
+.authCard{padding:clamp(22px,4vw,36px);border:1px solid var(--line);border-radius:var(--r-l);background:var(--paper);box-shadow:var(--shadow)}
+.authTabs{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:4px;margin-bottom:26px;border-radius:999px;background:var(--sea-wash)}
+.authTabs button{position:relative;z-index:1;padding:10px 0;border:0;border-radius:999px;background:none;font-weight:600;color:var(--ink-2);transition:color .25s}
+.authTabs button.active{color:var(--ink)}
+.tabPill{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:var(--paper);box-shadow:0 1px 2px rgba(15,37,64,.08),0 4px 12px -4px rgba(15,37,64,.14);transition:transform .45s var(--spring)}
+.authTabs:has([data-tab=signup].active) .tabPill{transform:translateX(100%)}
+.authCard h2{font-size:var(--t-xl);margin-bottom:20px}
+#authForm{display:grid;gap:18px}
+.field{display:grid;gap:7px}
+.field label{font-weight:600}
+.labelRow{display:flex;justify-content:space-between;align-items:baseline}
+.field input{width:100%;min-height:50px;padding:12px 14px;border:1.5px solid var(--line);border-radius:var(--r-m);background:#fff;font:500 1rem/1.3 var(--text);color:var(--ink);transition:border-color .2s,box-shadow .2s}
+.field input:focus{outline:0;border-color:var(--sea);box-shadow:0 0 0 4px var(--sea-tint)}
+.field.invalid input{border-color:var(--red);box-shadow:0 0 0 4px var(--red-tint)}
+.inputWrap{position:relative}
+.inputOk{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#2f8a5b;font-size:var(--t-sm);font-weight:600;pointer-events:none}
+.fieldHint{color:var(--mist);font-size:var(--t-sm)}
+.fieldHint:empty,.fieldError:empty{display:none}
+.fieldError{color:var(--red);font-size:var(--t-sm);font-weight:600;animation:sheetIn .3s var(--ease)}
+.linkBtn{padding:0;border:0;background:none;color:var(--sea-deep);font-size:var(--t-sm);font-weight:600}
+.linkBtn:hover{text-decoration:underline}
+.authNote{padding:12px 14px;border-radius:var(--r-s);background:var(--sea-wash);color:var(--ink-2);font-size:var(--t-sm)}
+.authNote.warn{background:var(--red-tint);color:#7d3027;font-weight:500}
+.authNote.shake{animation:shake .42s}
+#authSubmit{width:100%;margin-top:4px}
+#authSubmit.loading span::before{content:"";display:inline-block;width:16px;height:16px;margin-right:10px;vertical-align:-3px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+.authGuest{display:grid;gap:10px;margin-top:22px;padding-top:22px;border-top:1px solid var(--line-2)}
+.authGuest .btn{width:100%}
+.authGuest small{color:var(--mist);font-size:var(--t-sm);text-align:center}
+
+/* ---------- Profilkopf mit Konto ---------- */
+.profileHead{flex-wrap:wrap}
+.profileHeadText{flex:1;min-width:220px}
+.profileActions{display:flex;gap:10px}
+
+/* ---------- Dialog ---------- */
+.dialog{width:min(92vw,460px);padding:28px;border:0;border-radius:var(--r-l);background:var(--paper);color:var(--ink);box-shadow:0 30px 80px -20px rgba(15,37,64,.45)}
+.dialog[open]{animation:dialogIn .35s var(--spring)}
+.dialog::backdrop{background:rgba(15,37,64,.35);backdrop-filter:blur(3px)}
+.dialog h2{font-size:var(--t-xl);margin-bottom:10px}
+.dialog p{color:var(--ink-2);line-height:1.55}
+.dialogActions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+.btnDanger{background:var(--red)!important}
+
+@keyframes pulseDot{50%{transform:scale(1.6);opacity:.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes dialogIn{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+@media (max-width:760px){
+  .authLayout{grid-template-columns:1fr;align-items:start;min-height:0;gap:28px}
+  .authIntro h1{font-size:var(--t-3xl)}
+  .authMark{width:40px;height:40px;margin-bottom:18px}
+  .accName{max-width:84px}
+  .topRight{gap:12px}
+  .topStats{gap:10px}
+  .profileActions{width:100%}
+  .dialogActions{flex-direction:column-reverse}
+  .dialogActions .btn{width:100%}
+}
+@media (max-width:380px){.accName{display:none}.accountBtn{padding-right:8px}}
