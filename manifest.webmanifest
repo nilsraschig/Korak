@@ -3,8 +3,8 @@
   "short_name": "Korak",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#eef5fd",
-  "theme_color": "#eef5fd",
+  "background_color": "#f3ede1",
+  "theme_color": "#f3ede1",
   "icons": [
     {
       "src": "icon-192.png",
@@ -22,5 +22,5 @@
       "type": "image/png"
     }
   ],
-  "description": "Kroatisch lernen mit Lernpfad, Übungsmodus, Fortschritt und Erfolgen"
+  "description": "Kroatisch lernen auf einer Reise entlang der Küste – mit Vala, Übungsmodus, Fortschritt und Souvenirs"
 }

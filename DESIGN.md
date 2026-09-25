@@ -1,44 +1,75 @@
-# Korak – Designwelt „Plavo more“ (Blaues Meer)
+# Korak – Designwelt „Put uz obalu“ (Weg entlang der Küste)
 
-Korak heißt „Schritt“. Die App fühlt sich an wie ein heller Tag an der Adria: klares, helles Blau,
-Licht, das über das Wasser wandert, und Trittsteine, über die man Schritt für Schritt vorankommt.
+Korak heißt „Schritt“. Die App ist eine Reise entlang der kroatischen Küste, von Poreč in Istrien bis
+Dubrovnik. Sie soll sich anfühlen wie ein handgezeichnetes Reisetagebuch: Papier, Aquarell, Tinte,
+Mosaiksteine – nicht wie eine generische App mit Verläufen, Glas und glatten 3D-Icons.
 
 ## Farben
 | Token | Wert | Rolle |
 |---|---|---|
-| `--stone` | `#eef5fd` | helles Adria-Blau, Hintergrund |
-| `--paper` | `#fbfdff` | erhöhte Flächen (Antworten, Aktionen, Kennzahl) |
-| `--ink` | `#0f2540` | Marineblau, Text und Dock |
-| `--sea` | `#1f6fca` | **einziger Akzent**: Fortschritt, Primäraktionen, „richtig“ (Weiß darauf 5,0 : 1) |
-| `--sea-tint` / `--sea-wash` | `#dcebfb` / `#eaf3fe` | helle Blauflächen |
-| `--red` | `#b34a3e` | entsättigtes Šahovnica-Rot, ausschließlich für Fehler |
-| `--gold` | `#c3912a` | ausschließlich Sterne und Grammatiktipps |
+| `--stone` | `#f3ede1` | Papiergrund (mit Körnung über `.paperGrain`) |
+| `--paper` | `#fbf7ee` | Karten, erhöhte Flächen |
+| `--ink` / `--deep` | `#14324a` | tiefes Meerblau: Text, Tintenränder, Dock |
+| `--sea` | `#0f6b73` | Türkis, tief: Primäraktionen, Fortschritt, „richtig“ (Weiß darauf 6,2 : 1) |
+| `--turq` | `#2f9c98` | Türkis, hell: Wasser, Balken, Details |
+| `--terra` / `--terra-ink` | `#c0643d` / `#9a4526` | Terrakotta: Kapiteltests, Handschrift-Beschriftungen (dunkle Variante für kleine Schrift) |
+| `--sand` | `#e6d3ae` | Sand: versetzte „Druck“-Schatten unter Karten, Land auf der Karte |
+| `--olive` | `#6f7a3b` | Olivgrün: erfüllte Tagesziele, B1 |
+| `--sun` | `#e7ae2f` | Sonnengelb: **nur Akzent** (aktueller Ort, Wörterbuch-Knopf, Sterne) |
+| `--red` | `#a63a2a` | Ziegelrot: ausschließlich Fehler |
+
+Keine dekorativen Farbverläufe. Flächen sind flach und bekommen ihre Lebendigkeit über Papierkörnung,
+den Aquarellfilter und Tintenränder.
 
 ## Typografie
-- **Bricolage Grotesque** (Display): Überschriften, große Zahlen, Levelcodes, Wortmarke „korak“ in Kleinbuchstaben.
+- **Fraunces** (Display, weiche Variante `SOFT 100`, `WONK 1`): Überschriften, große Zahlen, Levelcodes,
+  Wortmarke „korak“. Seitentitel kursiv – warm und redaktionell.
+- **Caveat** (Handschrift): alles, was „jemand ins Reisetagebuch geschrieben“ hat – Grüße, Valas Sprechblase,
+  Ortsnamen auf der Karte, Regionsnamen, „Nächster Halt“, kroatische Souvenir-Namen.
 - **Geist** (Text/UI): alles andere, Zahlen tabellarisch.
-- Skala im Verhältnis 1,25 (`--t-xs` … `--t-4xl`). Keine Versal-Labels, keine Punkt-Trenner in Metazeilen.
+- Alle drei Schriften enthalten č ć đ š ž.
+
+## Formen
+- Organische Rundungen: Radien nie ganz gleichmäßig (`--r-s`, `--r-m`, `--r-l`, `--r-btn`).
+- Karten mit Bedeutung haben einen Tintenrand (`1.8px var(--ink)`) und einen versetzten Sand-Schatten
+  statt weicher Unschärfe – wie ein aufgeklebtes Stück Papier.
+- Buttons haben eine „gedrückte“ Unterkante (`box-shadow: 0 3px 0`) und sinken beim Tippen ein.
 
 ## Signatur
-- **Treppe** auf der Startseite: Gesamtfortschritt als zehn ansteigende Stufen.
-- **Trittstein-Pfad** im Kurs: Lektionen als Steine im Zickzack, verbunden durch eine Linie,
-  deren erledigter Teil sich beim Öffnen zeichnet. Kapiteltests sind auf die Spitze gestellte Steine.
-- **Stufen-Zeichen** als Logo und als Abschlussanimation.
+- **Vala** (`vala.js`): eine freche Mauereidechse im Kinderbuch-Stil, als SVG aus Einzelteilen
+  (Schwanz, Körper, Beine, Kopf, Tasche) mit Aquarell- (`#paint`) und Tintenfilter (`#ink`).
+  Posen per CSS-Klasse: `idle` (atmet, blinzelt), `jump` (richtige Antwort), `tilt` (legt den Kopf schief,
+  Fragezeichen – falsche Antwort), `cheer` (Abschluss, Ankunft), `walk` (Reise auf der Karte).
+  Die Zeichnung kann später 1:1 durch eine beauftragte Illustration ersetzt werden (gleiche Klassen).
+- **Küstenkarte** (`coast.js`): eine handgezeichnete Karte von Istrien bis Dubrovnik. Jedes Kapitel ist ein
+  echter Ort mit Wahrzeichen-Silhouette (Glockenturm in Rovinj, Arena in Pula, „Gruß an die Sonne“ in Zadar,
+  Krka-Wasserfälle, Diokletianpalast in Split, Lavendel auf Hvar, Stadtmauern von Dubrovnik …). Die erledigte Route ist in Türkis nachgezogen; nach jedem bestandenen
+  Kapiteltest läuft Vala beim nächsten Öffnen der Karte zur nächsten Station.
+- **Mosaik** als wiederkehrendes Element: Trenner auf der Startseite (`.mosaicRule`), Rahmen um verdiente
+  Souvenirs, Kante der Anmeldekarte und der Übungskachel, Ladebildschirm (`.mosaicLoader`), Logo
+  (drei Steinchen), Reiseleiste (jeder Ort ein Steinchen).
+- **Souvenirs** statt Erfolgen: Vala sammelt Andenken (Olivenzweig, Mosaikstein, Muschel, Ansichtskarte,
+  Lavendel aus Hvar, Šibenik-Knopf, Spitze aus Pag, Kaffeetasse, Leuchtturm, Krawatte) – jedes mit
+  kroatischem Namen. Die Freischaltbedingungen der bisherigen Erfolge bleiben unverändert.
 
 ## Bewegung
-- Ein Auftritt pro Ansichtswechsel (gestaffelt, 70 ms Versatz), sonst nur Bewegung als Antwort auf Aktionen:
-  Dock-Indikator gleitet, Feedback-Blatt steigt auf, falsche Antworten schütteln, richtige „poppen“.
-- Dauerschleifen bewusst leise: wanderndes Licht im Hintergrund, Wellen unter der Treppe, atmender Ring
-  um den aktuellen Trittstein, flackernde Serien-Flamme, Schimmer auf dem Lektionsbalken.
-- Belohnung: Welle beim Tippen (Ripple), Lichtkante unter dem Cursor, Partikel und „+8 XP“ bei richtigen
-  Antworten, Konfetti ab 70 % am Lektionsende.
-- Kurven: `--ease` (expo-out) für Wege, `--spring` für Bestätigungen. `prefers-reduced-motion` schaltet alles ab.
+- Richtige Antwort: das Feedback-Blatt steigt als **sanfte Welle** auf, Vala hüpft. Kein Konfetti, keine Partikel.
+- Falsche Antwort: Vala legt neugierig den Kopf schief; die Antwort schüttelt kurz.
+- Startseite: leichter **Parallax-Effekt** der Küstenszene (Scrollen und Mauszeiger), Meer wiegt sich langsam.
+- Karte: Vala läuft entlang der Route (ca. 2,6 s), danach jubelt sie.
+- Alles Dauerhafte ist leise (atmen, blinzeln, atmender Ring um den aktuellen Ort) und läuft über
+  `transform`/`translate`, damit es auf dem Handy flüssig bleibt. `prefers-reduced-motion` schaltet alles ab;
+  die Reise springt dann direkt zum Ziel.
+
+## Klänge (`sound.js`)
+Dezente, per Web Audio erzeugte Klänge (keine Audiodateien): Welle + zwei Töne bei „richtig“, tiefer Ton bei
+„falsch“, Möwe und Welle beim Öffnen der Karte und bei Valas Reise, kleine Melodie am Lektionsende.
+**Standardmäßig aus**, Schalter unter Profil › Klänge (nur auf diesem Gerät gespeichert).
 
 ## Regeln
-- Keine Emojis in der Oberfläche – Icons sind eigene SVG-Symbole im Sprite in `index.html`
-  (Kapitel-Icons über `CHAPTER_ICON` in `app.js`, `course-data.js` bleibt unverändert).
-- Karten nur, wo Erhöhung etwas bedeutet (Antworten, Aktionen, Kennzahl). Sonst Listen mit Trennlinien.
-- Rot und Gold nie dekorativ verwenden.
+- Keine Emojis in der Oberfläche – Icons sind eigene SVG-Symbole im Sprite in `index.html`.
+- Sonnengelb und Ziegelrot nie flächig-dekorativ verwenden.
+- Neue Orte: Station in `Coast.STATIONS` (Kapitel-ID, Name, Koordinaten, Wahrzeichen) ergänzen.
 
 ## Aussprache
 Die Sprachausgabe wählt die beste Stimme des Geräts: Kroatisch, sonst Bosnisch/Serbisch (gleiche
