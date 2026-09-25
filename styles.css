@@ -585,3 +585,16 @@ main{max-width:1080px;margin:0 auto;padding:24px var(--gutter) 140px}
 .dictExamples{display:flex;flex-wrap:wrap;gap:6px}
 .dictExamples button{padding:6px 11px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--sea-deep);font-weight:700;font-size:.85rem}
 @media (max-width:560px){.dict{right:8px;left:8px;width:auto;bottom:calc(92px + env(safe-area-inset-bottom));max-height:calc(100dvh - 170px)}.dictFab{width:50px;height:50px;border-radius:16px;bottom:calc(92px + env(safe-area-inset-bottom))}}
+
+/* ---------- Kultur-Infoboxen ---------- */
+.culture{margin:4px 0 14px;border-radius:var(--r-m);background:#fbf3df;color:#4d3d17}
+details.culture{padding:0 16px}
+details.culture summary{cursor:pointer;padding:12px 0;font-weight:600;list-style:none}
+details.culture summary::-webkit-details-marker{display:none}
+details.culture summary::before{content:"+";display:inline-block;width:1.2em;color:var(--gold);font-weight:800;transition:transform .25s var(--ease)}
+details.culture[open] summary::before{transform:rotate(45deg)}
+details.culture p{padding:0 0 14px;line-height:1.55}
+.cultureCard{display:grid;gap:6px;margin:0 0 28px;padding:18px 20px;border-left:3px solid var(--gold)}
+.cultureLabel{font-size:var(--t-sm);font-weight:700;color:var(--gold)}
+.cultureCard h3{font-size:var(--t-lg);color:inherit}
+.cultureCard p{line-height:1.55}
