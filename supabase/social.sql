@@ -336,3 +336,6 @@ grant execute on function public.respond_friend_request(bigint, boolean) to auth
 grant execute on function public.remove_friend(bigint) to authenticated;
 grant execute on function public.social_overview() to authenticated;
 grant execute on function public.league_standings() to authenticated;
+
+-- API sofort über die neuen Funktionen informieren (sonst kann es kurz dauern)
+notify pgrst, 'reload schema';
