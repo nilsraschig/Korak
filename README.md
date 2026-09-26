@@ -1,5 +1,7 @@
 # Korak Version 11 – „Put uz obalu“
 
+Live: **https://korak-hr.netlify.app**
+
 ## Neu in Version 11
 - **Design „Put uz obalu“** (siehe `DESIGN.md`): Reise entlang der Küste von Poreč bis Dubrovnik.
   Papier- und Aquarell-Look, Mosaik als wiederkehrendes Element, Schriften Fraunces, Caveat und Geist.
