@@ -544,7 +544,7 @@ details.culture p{padding:0 0 14px;line-height:1.55}
 .newSouvenir .souvenirArt{width:48px;height:48px;flex:none}
 
 /* ---------- Dock-Navigation ---------- */
-.dock{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));z-index:40;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:min(calc(100% - 24px),520px);padding:6px;border-radius:26px 30px 25px 31px/30px 26px 31px 25px;background:var(--deep);box-shadow:0 16px 34px -16px rgba(20,50,74,.6);transform:translateX(-50%);transition:transform .45s var(--ease)}
+.dock{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));z-index:40;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:min(calc(100% - 20px),580px);padding:6px;border-radius:26px 30px 25px 31px/30px 26px 31px 25px;background:var(--deep);box-shadow:0 16px 34px -16px rgba(20,50,74,.6);transform:translateX(-50%);transition:transform .45s var(--ease)}
 .dockPill{position:absolute;top:6px;left:0;height:calc(100% - 12px);width:var(--w,0px);border-radius:20px 24px 19px 23px;background:var(--stone);transform:translateX(var(--x,6px));transition:transform .5s var(--spring),width .4s var(--ease)}
 .dock button{position:relative;z-index:1;display:grid;justify-items:center;gap:2px;padding:8px 2px 7px;border:0;background:none;color:rgba(251,247,238,.7);font-size:.7rem;font-weight:600;transition:color .3s}
 .dock button .ico{width:22px;height:22px}
@@ -745,3 +745,118 @@ details.culture p{padding:0 0 14px;line-height:1.55}
   .vala.idle .v-lid{animation:none!important}
   .mosaicLoader i{opacity:1;transform:none}
 }
+
+/* ---------- Hafen: Crew & Regatta der Woche ---------- */
+.dock button.hasNews::after{content:"";position:absolute;top:6px;left:calc(50% + 7px);width:9px;height:9px;border-radius:2px 3px 2px 3px;background:var(--sun);box-shadow:0 0 0 2px var(--deep);transform:rotate(12deg);animation:pop .5s var(--spring)}
+.dock button.hasNews.active::after{box-shadow:0 0 0 2px var(--stone)}
+.hafenGuest{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:clamp(16px,4vw,36px);max-width:760px;padding:clamp(20px,4vw,32px);border:1.8px solid var(--ink);border-radius:var(--r-l);background:var(--paper);box-shadow:5px 6px 0 var(--sand)}
+.hafenGuestVala{width:clamp(100px,18vw,150px)}
+.hafenGuest h2{font-size:var(--t-xl);font-style:italic;margin-bottom:8px}
+.hafenGuest p{color:var(--ink-2);margin-bottom:18px;max-width:46ch}
+#hafenError{margin-bottom:18px}
+.hafenLayout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(24px,4vw,48px);align-items:start}
+
+.regattaHead,.crewHead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.regattaHead h2,.crewHead h2{font-size:var(--t-xl);font-style:italic}
+.regattaHead span,.crewHead span{font:700 1.15rem/1.1 var(--hand);color:var(--terra-ink);text-align:right}
+.regattaSea{position:relative;overflow:hidden;border:1.8px solid var(--ink);border-radius:var(--r-l);background:#cfe4dc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='34'%3E%3Cpath d='M6 20 q5 -5 10 0 t10 0 M52 8 q5 -5 10 0 t10 0' fill='none' stroke='%238cc2b8' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E") repeat 0 0/90px 34px;box-shadow:5px 6px 0 var(--sand)}
+.course{position:relative;padding:10px 0 8px}
+.buoy{position:absolute;top:8px;bottom:8px;width:0;border-left:2px dashed rgba(20,50,74,.35)}
+.buoy::before{content:"";position:absolute;top:-2px;left:-7px;width:12px;height:12px;border:1.6px solid var(--ink);border-radius:50%;background:var(--terra)}
+.buoy.start{left:calc(4% + 22px)}
+.buoy.finish{right:8%}
+.buoy.finish::before{background:var(--sun)}
+.buoy.finish::after{content:"Ziel";position:absolute;bottom:-4px;left:-34px;font:700 1rem/1 var(--hand);color:var(--ink)}
+.lane{position:relative;height:46px}
+.lane+.lane{border-top:1px dashed rgba(20,50,74,.12)}
+.boatWrap{position:absolute;left:0;top:2px;display:flex;align-items:center;gap:4px;transform:translateX(0);transition:transform 1.4s var(--ease);transition-delay:calc(var(--lane) * 90ms);width:100%;pointer-events:none}
+.boatWrap.sail{transform:translateX(calc(var(--x) * var(--reach,.88)))}
+.boat{width:48px;height:38px;flex:none;animation:bob 3.2s ease-in-out infinite;animation-delay:calc(var(--lane) * -.6s)}
+.boatName{font:700 1.05rem/1 var(--hand);color:var(--ink);white-space:nowrap;background:rgba(251,247,238,.75);padding:2px 6px;border-radius:6px}
+.lane.me .boatName{background:var(--sun-tint);box-shadow:0 0 0 1.4px var(--ink)}
+.regattaEmpty{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:14px 18px;padding:18px}
+.regattaEmptyVala{width:96px;grid-row:span 2}
+.regattaEmpty p{color:var(--ink);background:rgba(251,247,238,.85);padding:10px 12px;border-radius:12px;max-width:44ch}
+.regattaEmpty .btn{justify-self:start}
+.regattaSize{margin:12px 0 6px;color:var(--mist);font-size:var(--t-sm)}
+.regattaSize:empty{display:none}
+.regattaList{list-style:none;margin:0;padding:0}
+.regattaList li{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:12px;padding:10px 6px;border-bottom:1.5px dashed var(--line-2);animation:rise .45s var(--ease) both}
+.regattaList .rk{display:grid;place-items:center;width:28px;height:28px;border-radius:7px 9px 7px 9px;background:var(--line-2);font:700 .85rem/1 var(--text);font-variant-numeric:tabular-nums;transform:rotate(-4deg)}
+.regattaList .p1 .rk{background:var(--sun)}
+.regattaList .p2 .rk{background:var(--sand)}
+.regattaList .p3 .rk{background:var(--terra);color:var(--paper)}
+.regattaList .nm{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.regattaList small{font-weight:500;color:var(--mist)}
+.regattaList b{font:600 var(--t-md)/1 var(--display);font-variant-numeric:tabular-nums}
+.regattaList li.me{background:var(--sun-tint);border-radius:12px;border-bottom-color:transparent}
+.crewTag{display:inline-block;margin-left:4px;padding:1px 6px;border-radius:6px;background:var(--sea-tint);color:var(--sea-deep)!important;font-size:.75rem}
+
+.crewSearch{display:flex;align-items:center;gap:8px;padding:0 12px;border:1.8px solid var(--line);border-radius:var(--r-m);background:#fffdf8;transition:border-color .15s,box-shadow .15s}
+.crewSearch:focus-within{border-color:var(--sea);box-shadow:0 0 0 4px var(--sea-tint)}
+.crewSearch .ico{color:var(--mist)}
+.crewSearch input{flex:1;min-width:0;padding:12px 0;border:0;outline:0;background:none;font:inherit;font-size:1rem;color:inherit}
+.crewResults{display:grid;gap:6px;margin:10px 0 16px}
+.crewResults:empty{margin:0 0 16px}
+.result{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:8px 8px 8px 10px;border-radius:14px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line-2);animation:rise .3s var(--ease) both}
+.result .btn{min-height:38px;padding:6px 14px;font-size:var(--t-sm)}
+.resultState{font:700 1.05rem/1 var(--hand);color:var(--sea-deep);padding-right:6px}
+.crewHint,.crewEmpty{color:var(--ink-2);font-size:var(--t-sm);padding:6px 2px}
+.crewEmpty{padding:18px 0}
+.mono{display:grid;place-items:center;width:38px;height:38px;flex:none;border-radius:10px 13px 9px 12px;background:var(--c);color:var(--paper);font:italic 700 1.1rem/1 var(--display);transform:rotate(-5deg);box-shadow:2px 2px 0 var(--sand)}
+.bottleCard{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:6px 12px;margin-bottom:10px;padding:12px 14px;border:1.8px solid var(--ink);border-radius:var(--r-l);background:var(--paper);box-shadow:4px 5px 0 var(--sand);animation:rise .4s var(--ease) both}
+.bottle{width:48px;height:48px;grid-row:span 2;animation:bob 3s ease-in-out infinite}
+.bottleActions{display:flex;flex-wrap:wrap;gap:8px}
+.bottleActions .btn{min-height:40px;padding:8px 16px}
+.outgoing{margin:6px 0 14px}
+.outgoing h3{font:700 1.15rem/1 var(--hand);color:var(--terra-ink);margin-bottom:4px}
+.outRow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px;padding:8px 0;border-bottom:1.5px dashed var(--line-2);color:var(--ink-2);font-size:var(--t-sm)}
+.crewList{display:grid;gap:4px}
+.mate{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:10px 0;border-bottom:1.5px dashed var(--line-2);animation:rise .4s var(--ease) both}
+.mateText{display:grid;min-width:0}
+.mateText b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mateText small{font:700 1.05rem/1.1 var(--hand);color:var(--terra-ink)}
+.mateStats{display:flex;gap:10px;margin:0}
+.mateStats div{display:flex;align-items:center;gap:3px}
+.mateStats dt .ico{width:16px;height:16px;color:var(--sea)}
+.mateStats div:first-child dt .ico{color:var(--terra)}
+.mateStats dd{margin:0;font-weight:650;font-variant-numeric:tabular-nums}
+.mateActions{display:flex;gap:6px}
+.mateActions .iconBtn{width:38px;height:38px}
+.mateActions .iconBtn.confirm{background:var(--red-tint);border-color:var(--red);color:var(--red)}
+
+/* Wimpel der Crew auf der Küstenkarte */
+.friendFlag{cursor:pointer;outline:none}
+.friendFlag path:nth-child(2){transform-box:fill-box;transform-origin:0 50%;animation:flutter 2.4s ease-in-out infinite}
+.friendFlag:hover path:nth-child(2),.friendFlag:focus-visible path:nth-child(2){stroke-width:2}
+.flagInitial{font:700 6.5px var(--text);fill:#fff;pointer-events:none}
+.flagMore{font:700 13px var(--hand);fill:var(--ink)}
+.visitSays{position:absolute;z-index:3;translate:-50% calc(-100% - 50px);width:max-content;max-width:190px;margin:0;padding:6px 10px;border:1.6px solid var(--ink);border-radius:14px 16px 14px 5px;background:var(--paper);font:700 1.05rem/1.15 var(--hand);color:var(--ink);box-shadow:2px 3px 0 rgba(20,50,74,.12);pointer-events:none;animation:speechIn .45s var(--spring) both}
+
+/* Hinweis beim nächsten Besuch */
+.hafenNote{position:fixed;left:50%;top:max(12px,env(safe-area-inset-top));z-index:75;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;width:min(calc(100% - 24px),560px);padding:10px 12px 10px 8px;border:1.8px solid var(--ink);border-radius:var(--r-l);background:var(--paper);box-shadow:5px 6px 0 var(--sand);opacity:0;transform:translate(-50%,-140%);pointer-events:none;transition:transform .55s var(--spring),opacity .3s}
+.hafenNote.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.noteVala{width:64px}
+.noteLabel{display:block;font:700 1.05rem/1 var(--hand);color:var(--terra-ink);margin-bottom:2px}
+.noteText p{font-size:var(--t-sm);line-height:1.35}
+.noteText p+p{margin-top:4px}
+.noteActions{display:flex;align-items:center;gap:6px}
+.noteActions .btn{min-height:38px;padding:6px 12px;font-size:var(--t-sm)}
+.noteActions .iconBtn{width:36px;height:36px}
+.inLesson .hafenNote,.inAuth .hafenNote{display:none}
+@keyframes flutter{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-6deg) scaleX(.9)}}
+@media (max-width:860px){.hafenLayout{grid-template-columns:1fr}}
+@media (max-width:560px){
+  .hafenGuest{grid-template-columns:1fr}
+  .hafenNote{grid-template-columns:auto 1fr;padding-right:10px}
+  .noteActions{grid-column:1/-1;justify-content:flex-end}
+  .noteVala{width:52px}
+  .mate{grid-template-columns:auto minmax(0,1fr) auto;row-gap:6px}
+  .mateActions{grid-column:2/-1;justify-content:flex-end}
+  .regattaEmpty{grid-template-columns:1fr}
+  .regattaEmptyVala{grid-row:auto;width:80px}
+  .boatName{font-size:.95rem}
+  .regattaSea{--reach:.6}
+}
+@media (max-width:380px){.dock button{font-size:.6rem}.dock button .ico{width:20px;height:20px}}
+@media (prefers-reduced-motion:reduce){.boatWrap{transition:none}}

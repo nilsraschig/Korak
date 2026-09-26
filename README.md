@@ -1,5 +1,12 @@
 # Korak Version 11 – „Put uz obalu“
 
+## Neu: Hafen – Freunde & Wochen-Regatta
+- **Crew:** Freunde per Username suchen, Anfrage als „Flaschenpost“ senden, annehmen oder ablehnen.
+- **Regatta der Woche:** Gruppen mit bis zu 25 Booten sammeln XP gegeneinander; Montag geht es neu los.
+- **Vala besucht Freunde:** Wimpel zeigen auf der Küstenkarte, wo deine Crew gerade ist; antippen, und Vala segelt hin.
+- **Hinweise** beim nächsten Besuch: neue Anfragen und „… hat dich in der Regatta überholt“.
+- Nur mit Account; Einrichtung: `supabase/social.sql` ausführen (siehe [`supabase/README.md`](supabase/README.md)).
+
 ## Neu in Version 11
 - **Design „Put uz obalu“** (siehe `DESIGN.md`): Reise entlang der Küste von Poreč bis Dubrovnik.
   Papier- und Aquarell-Look, Mosaik als wiederkehrendes Element, Schriften Fraunces, Caveat und Geist.

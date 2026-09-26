@@ -31,6 +31,22 @@ Was es anlegt:
 In `config.js` steht `https://dlppaluxzixubuclcxnu.supabase.co` (Supabase-Projekte enden auf **.co**).
 Vergleichen mit Dashboard › Project Settings › **API** › Project URL.
 
+## 4. Hafen: Freunde & Wochen-Regatta (`social.sql`)
+1. Dashboard › **SQL Editor** › *New query* → Inhalt von [`social.sql`](social.sql) einfügen → **Run**.
+   Das Skript legt nur Neues an (`friendships`, `xp_log`, `leagues`, `league_members`, einen Trigger an
+   `progress` und sechs Funktionen). Bestehende Tabellen und Policies bleiben unverändert; mehrfaches
+   Ausführen schadet nicht.
+2. Zur Kontrolle [`social-check.sql`](social-check.sql) ausführen: alle Zeilen müssen `ok = true` zeigen.
+3. **Nichts weiter einstellen:** kein Realtime (die App lädt beim Öffnen des Hafens und jede Minute neu),
+   kein Cron-Job (die Woche ergibt sich aus dem Zeitstempel, Montag 00:00 deutsche Zeit).
+
+So funktioniert es:
+- Jede XP-Erhöhung in `progress` schreibt der Trigger in `xp_log` (höchstens 300 XP pro Speichervorgang).
+  Beim ersten XP-Gewinn einer Woche wird man einer Gruppe mit höchstens 25 Booten zugeteilt.
+- Über andere Nutzer liefern die Funktionen nur Username, aktuelle Serie, Wochen-XP und die Zahl bestandener
+  Kapiteltests (= Ort auf der Karte). Freundschaften sind per RLS nur für die beiden Beteiligten sichtbar.
+- XP, die vor dem Einrichten gesammelt wurden, zählen nicht für die Regatta – sie startet mit dem nächsten XP-Gewinn.
+
 ## Wichtig zu wissen
 - **Kein Passwort-Reset per E-Mail.** Ohne echte Adresse kann Supabase keine Reset-Mail senden. Vergisst jemand
   das Passwort: Dashboard › Authentication › Users › Nutzer › *Reset password* bzw. neues Passwort setzen.
