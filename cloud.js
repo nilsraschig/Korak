@@ -213,6 +213,25 @@
         .select("updated_at").single();
       if (error) throw friendly(error);
       return { updatedAt: data && data.updated_at };
-    }
+    },
+
+    // ---------- Hafen: Freunde & Regatta (supabase/social.sql) ----------
+    // Liefern über andere Nutzer nur Username, Serie, Wochen-XP und Kapitelzahl.
+    async social(fn, args) {
+      need();
+      let data = null, error = null;
+      try { ({ data, error } = await client.rpc(fn, args || {})); } catch (e) { error = e; }
+      if (error) {
+        if (error.code === "PGRST202" || error.code === "42883") throw new CloudError("Der Hafen ist noch nicht eingerichtet (supabase/social.sql fehlt).", "setup");
+        throw friendly(error);
+      }
+      return data;
+    },
+    searchUsers(q) { return this.social("search_users", { q }); },
+    sendFriendRequest(username) { return this.social("send_friend_request", { target: username }); },
+    respondFriendRequest(id, accept) { return this.social("respond_friend_request", { request_id: id, accept }); },
+    removeFriend(id) { return this.social("remove_friend", { friendship_id: id }); },
+    socialOverview() { return this.social("social_overview"); },
+    leagueStandings() { return this.social("league_standings"); }
   };
 })();

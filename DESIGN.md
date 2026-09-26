@@ -52,6 +52,14 @@ den Aquarellfilter und Tintenränder.
   Lavendel aus Hvar, Šibenik-Knopf, Spitze aus Pag, Kaffeetasse, Leuchtturm, Krawatte) – jedes mit
   kroatischem Namen. Die Freischaltbedingungen der bisherigen Erfolge bleiben unverändert.
 
+## Hafen (Freunde & Liga)
+- **Hafen** statt „Social“: eigener Dock-Punkt mit Anker. Freunde sind die **Crew**, Anfragen kommen als
+  **Flaschenpost**, die Wochenliga ist eine **Regatta** – handgezeichnete Segelboote auf einem Stück Meer,
+  Abstand zum Führenden nach Wochen-XP, darunter die Rangliste auf Papier (Plätze 1–3 als Sonne, Sand, Terrakotta).
+- Auf der Küstenkarte zeigen kleine **Wimpel** mit Initial, wo die Crew gerade ist; Vala segelt auf Tipp hin,
+  grüßt in Handschrift und kehrt zurück.
+- Hinweise beim nächsten Besuch als Papier-Karte mit Vala („Nachricht aus dem Hafen“), nie als System-Push.
+
 ## Bewegung
 - Richtige Antwort: das Feedback-Blatt steigt als **sanfte Welle** auf, Vala hüpft. Kein Konfetti, keine Partikel.
 - Falsche Antwort: Vala legt neugierig den Kopf schief; die Antwort schüttelt kurz.

@@ -204,6 +204,7 @@
     else if (v === "practice") renderPractice();
     else if (v === "profile") renderProfile();
     else if (v === "achievements") renderAchievements();
+    else if (v === "hafen" && window.Social) Social.render();
   }
   function enterApp() {
     document.body.classList.remove("inAuth", "booting");
@@ -244,6 +245,7 @@
       await push({ last_login: new Date().toISOString() });
       refreshView();
       await offerMigration();
+      if (window.Social) Social.check();
     } catch (e) {
       console.warn("Fortschritt konnte nicht geladen werden:", e.cause || e);
       setStatus(isNetwork(e) ? "offline" : "error");
@@ -336,6 +338,7 @@
     $("#menuLogout").classList.toggle("hidden", !Account.user);
     $("#menuLogin").classList.toggle("hidden", !!Account.user);
     setStatus(Account.status);
+    if (window.Social) Social.updateBadge();
   }
   Account.updateUI = updateAccountUI;
 
