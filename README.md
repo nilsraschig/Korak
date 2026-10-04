@@ -1,5 +1,14 @@
 # Korak Version 11 – „Put uz obalu“
 
+## Neu: Onboarding & persönlicher Lernplan
+- Beim allerersten Start fragt Vala in 10 kurzen Schritten nach Niveau, Ziel, Grund, Lernstil und Zeit
+  und packt daraus einen Plan: Startort auf der Karte, Tagesziel in Einheiten (5 Min. ≈ 1 Einheit ≈ 8 Übungen),
+  Prognose, Übungsmix nach Lernstil. Frühere Orte lassen sich per Kapiteltest überspringen.
+- Danach „Plan sichern“ (Registrierung) oder „Ohne Konto weiter“ (Gastmodus).
+- Bestehende Nutzer sehen kein Pflicht-Onboarding; unter Profil › „Plan anpassen“ geht es jederzeit.
+- Fragen ändern: Daten-Array `STEPS` in `onboarding.js`. Planlogik: `buildPlan()` in `plan.js`.
+- Kursdaten liegen jetzt je Level in `course/`; prüfen mit `node scripts/validate-course.js`.
+
 ## Neu: Hafen – Freunde & Wochen-Regatta
 - **Crew:** Freunde per Username suchen, Anfrage als „Flaschenpost“ senden, annehmen oder ablehnen.
 - **Regatta der Woche:** Gruppen mit bis zu 25 Booten sammeln XP gegeneinander; Montag geht es neu los.

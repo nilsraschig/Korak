@@ -109,6 +109,11 @@
   /** Index der Station, an der Vala gerade ist: erstes offenes Kapitel des Levels, sonst letztes erledigtes. */
   function currentIndex(level) {
     const idx = STATIONS.map((s, i) => i).filter(i => stationLevel(i) === level);
+    // Mit Lernplan: Vala wartet am Startort, frühere (überspringbare) Orte sind nur offen
+    const plan = window.Plan && Plan.current();
+    const from = plan ? STATIONS.findIndex(s => s.id === plan.startChapterId) : -1;
+    const planned = from >= 0 ? idx.find(i => i >= from && stationState(i, level) === "open") : undefined;
+    if (planned != null) return planned;
     const open = idx.find(i => stationState(i, level) === "open");
     return open != null ? open : idx[idx.length - 1];
   }
@@ -222,7 +227,7 @@
     let done = 0, next = null;
     STATIONS.forEach((s, i) => {
       const lvl = stationLevel(i), st = stationState(i, lvl);
-      if (st === "done") done++; else if (!next && st === "open") next = s;
+      if (st === "done") done++; else if (!next && st === "open" && !(window.Plan && Plan.skippable(s.id))) next = s;
     });
     return { done, total: STATIONS.length, next: next || STATIONS.find((s, i) => stationState(i, stationLevel(i)) !== "done") || STATIONS[STATIONS.length - 1] };
   }
