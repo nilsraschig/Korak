@@ -29,6 +29,9 @@
     signingOut: false
   };
   window.Account = Account;
+  // Für das Onboarding (onboarding.js): Registrierung öffnen bzw. ohne Konto weiter
+  Account.showAuth = which => showAuth(which);
+  Account.enterGuest = () => enterGuest();
 
   // ---------- Zustand ----------
   const withDefaults = s => Object.assign(defaults(), s || {});
@@ -512,7 +515,19 @@
       return;
     }
     if (localStorage.getItem(MODE_KEY) === "guest") return enterGuest();
+    // Allererster Start auf diesem Gerät: erst das Onboarding, dann Registrierung oder Gastmodus
+    if (window.Onboarding && isFirstStart()) return Onboarding.start({ mode: "first" });
     showAuth("signin");
+  }
+
+  /** Kein Profil, kein Fortschritt, kein Gast- oder Kontohinweis in diesem Browser. */
+  function isFirstStart() {
+    const keys = ["korak-profile", "korak-v6", "korak-v5", "korak-a1-v3", MODE_KEY, LAST_USER_KEY, "korak-auth"];
+    try {
+      if (keys.some(k => localStorage.getItem(k) !== null)) return false;
+      for (let i = 0; i < localStorage.length; i++) if (/^korak-user-/.test(localStorage.key(i))) return false;
+      return true;
+    } catch (e) { return false; }
   }
   boot();
 })();

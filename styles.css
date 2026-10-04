@@ -860,3 +860,94 @@ details.culture p{padding:0 0 14px;line-height:1.55}
 }
 @media (max-width:380px){.dock button{font-size:.6rem}.dock button .ico{width:20px;height:20px}}
 @media (prefers-reduced-motion:reduce){.boatWrap{transition:none}}
+
+/* ---------- Onboarding: Vala packt deinen Plan ---------- */
+#onboarding{max-width:560px;margin:0 auto}
+#onboarding.active{display:flex;flex-direction:column;min-height:calc(100dvh - max(24px,env(safe-area-inset-top)) - 48px)}
+#onboarding.active>*{animation:none}
+.obTop{display:flex;align-items:center;gap:12px}
+.obBackSpacer{width:44px;flex:none}
+.obBag{flex:1;display:flex;justify-content:center;gap:6px;padding:6px 10px;border:1.8px solid var(--ink);border-radius:14px 18px 13px 17px;background:var(--terra-tint);box-shadow:3px 3px 0 var(--sand);position:relative}
+.obBag::before{content:"";position:absolute;left:50%;top:-11px;width:44px;height:12px;margin-left:-22px;border:1.8px solid var(--ink);border-bottom:0;border-radius:14px 14px 0 0}
+.obSlot{display:grid;place-items:center;width:34px;height:34px;border-radius:8px 10px 8px 10px;background:rgba(251,247,238,.75);box-shadow:inset 0 0 0 1.4px rgba(20,50,74,.18)}
+.obSlot .souvenirArt{width:28px;height:28px}
+.obSlot.pop{animation:dropIn .6s var(--spring)}
+.obCount{min-width:40px;text-align:right;color:var(--mist);font-weight:600;font-size:var(--t-sm);font-variant-numeric:tabular-nums}
+.obMeter{height:6px;margin:14px 0 6px;border-radius:6px;background:var(--line-2);overflow:hidden}
+.obMeter span{display:block;height:100%;border-radius:inherit;background:var(--turq);transition:width .5s var(--ease)}
+.obStage{flex:1;display:flex;flex-direction:column;padding-top:clamp(12px,3vh,28px);animation:rise .45s var(--ease) both}
+.obVala{width:118px;margin-bottom:-4px}
+.obSays{position:relative;align-self:flex-start;max-width:100%;padding:12px 16px 13px;border:1.8px solid var(--ink);border-radius:20px 24px 21px 6px/22px 20px 24px 8px;background:var(--paper);font:700 1.6rem/1.15 var(--hand);color:var(--ink);letter-spacing:0;box-shadow:3px 3px 0 rgba(20,50,74,.12);outline:none;animation:speechIn .5s var(--spring) both}
+.obSays:focus-visible{box-shadow:0 0 0 3px var(--sea-tint),3px 3px 0 rgba(20,50,74,.12)}
+.obText{margin-top:14px;color:var(--ink-2);font-size:var(--t-lg);line-height:1.45}
+.obBody{margin-top:18px}
+.obAccount{color:var(--ink-2);font-size:var(--t-sm)}
+.obOptions{display:grid;gap:10px}
+.obOptions.compact{grid-template-columns:1fr 1fr}
+.obOption{display:flex;align-items:center;gap:14px;width:100%;min-height:58px;padding:12px 16px;border:1.8px solid var(--line);border-radius:var(--r-m);background:var(--paper);text-align:left;box-shadow:0 3px 0 var(--line-2);transition:transform .2s var(--ease),border-color .2s,background-color .2s;animation:rise .4s var(--ease) both;animation-delay:calc(var(--k,0) * 45ms + .1s)}
+.obOption:hover{border-color:var(--ink);background:#fff}
+.obOption:active{transform:translateY(2px)}
+.obOption.selected{border-color:var(--sea);background:var(--sea-wash);box-shadow:0 3px 0 var(--sea-tint)}
+.obLabel{display:grid;gap:2px}
+.obLabel b{font-weight:600;font-size:1.05rem}
+.obLabel small{color:var(--mist);font-size:var(--t-sm)}
+.obTag{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:10px 13px 9px 12px;background:var(--sand);font:italic 700 1rem/1 var(--display);color:var(--ink);transform:rotate(-4deg)}
+.obOption.selected .obTag{background:var(--sea);color:#fff}
+.obActions{display:grid;gap:10px;padding:22px 0 max(8px,env(safe-area-inset-bottom))}
+.obActions .btn{width:100%}
+.obFine{color:var(--mist);font-size:var(--t-sm);text-align:center}
+.obScene{overflow:hidden;border:1.8px solid var(--ink);border-radius:var(--r-l);box-shadow:5px 6px 0 var(--sand)}
+.obScene svg{display:block;width:100%;height:auto}
+.obPlace{font:700 17px var(--hand);fill:var(--ink)}
+.obBoat{animation:sailOut 5s var(--ease) .4s both}
+.obBoat>g>g:first-child{animation:bob 2.6s ease-in-out infinite}
+.obWaves{animation:swayX 6s ease-in-out infinite alternate}
+.obChart{margin:0;padding:14px 12px 10px;border:1.8px solid var(--ink);border-radius:var(--r-l);background:var(--paper);box-shadow:5px 6px 0 var(--sand)}
+.obChart svg{display:block;width:100%;height:auto}
+.obChart .axis{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+.obChart .axisLabel{font:600 11px var(--text);fill:var(--mist)}
+.obChart .levelLine{stroke:var(--terra);stroke-width:1.6;stroke-dasharray:5 5}
+.obChart .levelLabel{font:700 15px var(--hand);fill:var(--terra-ink)}
+.obChart .curve{fill:none;stroke-width:4;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:drawCurve 1.6s var(--ease) .3s forwards}
+.obChart .curve.with{stroke:var(--sea);animation-delay:.9s}
+.obChart .curve.without{stroke:var(--line);stroke-width:3.4}
+.obChart .curveLabel{font:700 16px var(--hand);opacity:0;animation:fadeIn .4s ease forwards}
+.obChart .curveLabel.with{fill:var(--sea);animation-delay:2.3s}
+.obChart .curveLabel.without{fill:var(--mist);animation-delay:1.7s}
+.obChart figcaption{margin-top:6px;color:var(--mist);font-size:var(--t-xs);text-align:right}
+.obTime{margin-top:18px}
+.obTime input{max-width:160px;font-variant-numeric:tabular-nums}
+.obTime small{color:var(--mist);font-size:var(--t-sm)}
+.obLoader{margin:6px auto 20px;justify-content:center}
+.obChecks{list-style:none;margin:0;padding:0}
+.obChecks li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1.5px dashed var(--line-2);color:var(--mist);transition:color .3s}
+.obChecks li.met{color:var(--ink)}
+.obChecks li.met .goalDot{background:var(--olive);border-color:var(--olive);color:#fff;animation:pop .5s var(--spring)}
+.obPlan{display:grid;gap:14px}
+.obPlanStart,.planCard{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:14px 16px;border:1.8px solid var(--ink);border-radius:var(--r-l);background:var(--paper);box-shadow:4px 5px 0 var(--sand)}
+.obPlanStart{grid-template-columns:auto 1fr}
+.obPlanStart b{display:block;font:italic 600 var(--t-2xl)/1.05 var(--display);font-variation-settings:var(--soft)}
+.obPlanStart small,.planText small{display:block;color:var(--ink-2);font-size:var(--t-sm);margin-top:2px}
+.planMark{display:grid;place-items:center;width:58px;height:58px;border-radius:var(--r-m);background:var(--sand)}
+.planMark .markIcon{width:46px;height:48px}
+.planLabel{display:block;font:700 1.1rem/1 var(--hand);color:var(--terra-ink);margin-bottom:2px}
+.obNote{color:var(--ink-2);font-size:var(--t-sm);padding:0 4px}
+.obFigures dd{font-size:var(--t-lg)}
+.obFigures dd small{display:block;text-align:right}
+.obReason{font:700 1.25rem/1.25 var(--hand);color:var(--ink)}
+.planCard{margin-bottom:22px}
+.planCard .planMark{width:50px;height:50px}
+.planCard .planMark .markIcon{width:40px;height:42px}
+.planText{min-width:0}
+.planText b{display:block;font-weight:600}
+.planSummary{margin:16px 0;color:var(--ink-2)}
+.skipHint{margin-top:4px;font:700 1rem/1.2 var(--hand);color:var(--sea-deep)}
+.inOnboarding .hafenNote{display:none}
+@keyframes dropIn{0%{transform:translateY(-26px) scale(.6) rotate(-14deg);opacity:0}60%{transform:translateY(3px) scale(1.08)}100%{transform:none;opacity:1}}
+@keyframes sailOut{from{transform:translateX(0)}to{transform:translateX(150px)}}
+@keyframes drawCurve{to{stroke-dashoffset:0}}
+@keyframes fadeIn{to{opacity:1}}
+@media (max-width:380px){.obOptions.compact{grid-template-columns:1fr}.obSlot{width:30px;height:30px}.obSays{font-size:1.45rem}}
+@media (min-width:700px){.obActions{grid-template-columns:1fr 1fr}.obActions .btn:only-child,.obActions .obFine{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){.obChart .curve{stroke-dashoffset:0}.obChart .curveLabel{opacity:1}.obBoat{animation:none;transform:translateX(150px)}}
+.jStop.skip{background:transparent;box-shadow:inset 0 0 0 1.6px var(--line);opacity:.55}

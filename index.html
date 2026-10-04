@@ -136,6 +136,8 @@
   </div>
 </section>
 
+<section id="onboarding" class="view" aria-label="Willkommen bei Korak"></section>
+
 <section id="home" class="view">
   <div class="homeHero">
     <div class="heroText">
@@ -163,6 +165,7 @@
 
   <div class="homeLower">
     <section class="today">
+      <div id="planCard" class="planCard hidden"></div>
       <div class="todayHead"><h2>Heute</h2><span id="dailyGoalLabel">0 von 20 Übungen</span></div>
       <div class="meter"><div id="dailyGoalBar"></div></div>
       <ul class="goals">
@@ -234,6 +237,10 @@
     </div>
     <div id="voiceStatus" class="voiceStatus"></div>
     <button id="voiceTest" class="btn btnQuiet"><svg class="ico"><use href="#i-sound"/></svg><span>Probehören</span></button>
+  </section>
+  <section class="block planBlock"><h2>Dein Lernplan</h2>
+    <p id="planSummary" class="planSummary"></p>
+    <button id="planEdit" type="button" class="btn btnQuiet"><svg class="ico"><use href="#i-compass"/></svg><span>Plan anpassen</span></button>
   </section>
   <section class="block soundBlock"><h2>Klänge</h2>
     <label class="switchRow"><span><b>Wellen, Möwen und Töne</b><small>Leise Klangakzente bei Antworten und auf der Karte. Nur auf diesem Gerät gespeichert.</small></span><input type="checkbox" id="soundToggle" class="switch" role="switch"></label>
@@ -327,5 +334,5 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
 <script src="cloud.js"></script>
-<script src="course-data.js"></script><script src="vala.js"></script><script src="coast.js"></script><script src="sound.js"></script><script src="culture-data.js"></script><script src="exercise-data.js"></script><script src="app.js"></script><script src="account.js"></script><script src="social.js"></script><script src="dictionary.js"></script>
+<script src="course/a1.js"></script><script src="course/a2.js"></script><script src="course/b1.js"></script><script src="course-data.js"></script><script src="vala.js"></script><script src="coast.js"></script><script src="sound.js"></script><script src="culture-data.js"></script><script src="exercise-data.js"></script><script src="plan.js"></script><script src="app.js"></script><script src="onboarding.js"></script><script src="account.js"></script><script src="social.js"></script><script src="dictionary.js"></script>
 </body></html>
