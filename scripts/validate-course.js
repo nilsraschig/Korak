@@ -15,7 +15,7 @@
  *    Test = <präfix>-test; `number` zählt je Level lückenlos. (ID = Position gilt nicht mehr, damit verschobene
  *    Kapitel ihre IDs behalten.)
  *  - Items mit `pos`: pos, category, concepts, gender (nur Nomen), forms – siehe checkAnnotation().
- *  - Vorlage (5 Lektionen + Test, ≥ 12 annotierte Items, Dialog ≥ 4 Zeilen, grammar, fact, Formen) gilt für Kapitel
+ *  - Vorlage (5 Lektionen + Test, ≥ 12 annotierte Items, Dialog ≥ 4 Zeilen, grammar, fact, ≥ 3 Items mit ≥ 4 verschiedenen forms) gilt für Kapitel
  *    in Levels mit status "complete" (genau 12 Kapitel) und für alle Kapitel aus --strict. In Levels mit status
  *    "draft" ist die Vorlage nur eine Warnung.
  *  - Querverweise: `at` in exercise-data.js und Schlüssel in culture-data.js müssen existieren.
@@ -26,6 +26,7 @@
 const fs = require("fs");
 const path = require("path");
 const { CONCEPTS, POS, CATEGORIES, CASES, autoConcepts } = require("../engine/concepts.js");
+const { norm } = require("../engine/core.js");
 const courseIo = require("./course-io.js");
 
 const LEVEL_IDS = ["A1", "A2", "B1"];
@@ -79,10 +80,13 @@ function checkAnnotation(it, where, err) {
   }
 }
 
-// Ein Item zählt für die Vorlage, wenn forms mindestens 4 Fälle mit nicht leerem Wert enthält.
+// Ein Item zählt für die Vorlage, wenn forms mindestens 4 verschiedene Formen enthält (verglichen nach norm).
+// Nur Fälle aus CASES mit nicht leerem Wert zählen. Gleiche Schreibweisen zählen einmal: sol (sol, soli, soli, sol, …)
+// hat nur 2 verschiedene Formen, more (more, mora, moru, morem) hat 4 – für „Endung wählen“ braucht es genug Optionen.
 function hasRichForms(it) {
   if (!it || !it.forms || typeof it.forms !== "object" || Array.isArray(it.forms)) return false;
-  return CASES.filter(k => isStr(it.forms[k])).length >= TEMPLATE.forms;
+  const distinct = new Set(CASES.filter(k => isStr(it.forms[k])).map(k => norm(it.forms[k])));
+  return distinct.size >= TEMPLATE.forms;
 }
 
 // ---------- Level-Vorlage ----------
@@ -104,7 +108,7 @@ function templateIssues(chapter) {
     if (l.fact === undefined) add("fact", `${l.id}: „Wusstest du?“ (fact mit title und text) fehlt`);
   });
   const rich = lessons.reduce((s, l) => s + (Array.isArray(l.items) ? l.items.filter(hasRichForms).length : 0), 0);
-  if (rich < TEMPLATE.formsItems) add("forms", `Kapitel: nur ${rich} Items mit forms aus mindestens ${TEMPLATE.forms} Formen (mindestens ${TEMPLATE.formsItems})`);
+  if (rich < TEMPLATE.formsItems) add("forms", `Kapitel: nur ${rich} Items mit forms aus mindestens ${TEMPLATE.forms} verschiedenen Formen (mindestens ${TEMPLATE.formsItems})`);
   return issues;
 }
 
@@ -418,4 +422,4 @@ function main(argv) {
 
 if (require.main === module) process.exitCode = main(process.argv.slice(2));
 
-module.exports = { validate, compareCourse, mapLessonId, loadLessonMap, checkAnnotation, templateIssues, TEMPLATE };
+module.exports = { validate, compareCourse, mapLessonId, loadLessonMap, checkAnnotation, templateIssues, hasRichForms, TEMPLATE };

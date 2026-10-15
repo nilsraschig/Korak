@@ -270,11 +270,11 @@ const TEMPLATE_CASES = [
     a1Lesson(parts, 2).items.forEach(it => delete it.forms);
     a1Lesson(parts, 3).items.forEach(it => delete it.forms);
     a1Lesson(parts, 4).items.forEach(it => delete it.forms);
-  }, /Kapitel: nur 2 Items mit forms aus mindestens 4 Formen \(mindestens 3\)/],
+  }, /Kapitel: nur 2 Items mit forms aus mindestens 4 verschiedenen Formen \(mindestens 3\)/],
   ["forms mit nur 3 Fällen zählen nicht", parts => {
     a1Lesson(parts, 0).items.forEach((it, i) => { if (i > 1) delete it.forms; else it.forms = { nom: it.hr, gen: it.hr + "a", dat: it.hr + "u" }; });
     for (let l = 1; l < 5; l++) a1Lesson(parts, l).items.forEach(it => delete it.forms);
-  }, /Kapitel: nur 0 Items mit forms aus mindestens 4 Formen/]
+  }, /Kapitel: nur 0 Items mit forms aus mindestens 4 verschiedenen Formen/]
 ];
 for (const [name, change, re] of TEMPLATE_CASES) {
   test(`Vorlage (complete-Level): ${name}`, t => {
@@ -308,6 +308,64 @@ test("fact, falls vorhanden, muss auch im Entwurf wohlgeformt sein", t => {
   const r = run(["--dir", dir]);
   assert.equal(r.code, 1, r.out);
   assert.match(r.out, /a1-1-1: fact\.text ist leer/);
+});
+
+// ---------- Vorlage: „mindestens 4 verschiedene Formen“ ----------
+
+const SOL = { nom: "sol", gen: "soli", dat: "soli", acc: "sol", ins: "soli", loc: "soli" }; // 6 Fälle, 2 verschiedene Formen
+const MORE = { nom: "more", gen: "mora", dat: "moru", acc: "more", ins: "morem", loc: "moru" }; // 6 Fälle, 4 verschiedene Formen
+
+test("hasRichForms: zählt verschiedene Formen, nicht Fälle (sol zählt nicht, more zählt)", () => {
+  const rich = forms => validator.hasRichForms({ hr: "x", forms });
+  assert.equal(rich(SOL), false);
+  assert.equal(rich(MORE), true);
+  // genau 4 verschiedene Formen reichen, 3 nicht
+  assert.equal(rich({ nom: "a", gen: "b", dat: "c", acc: "a", ins: "d" }), true);
+  assert.equal(rich({ nom: "a", gen: "b", dat: "c", acc: "a", ins: "c" }), false);
+  // Groß-/Kleinschreibung und Satzzeichen unterscheiden nicht (norm), leere Werte und fremde Schlüssel zählen nicht
+  assert.equal(rich({ nom: "More", gen: "more", dat: "mora", acc: "moru", ins: "more." }), false);
+  assert.equal(rich({ nom: "a", gen: "b", dat: "c", acc: "", ins: " ", abl: "d" }), false);
+  assert.equal(rich(undefined), false);
+  assert.equal(validator.hasRichForms(null), false);
+});
+
+test("Vorlage: Kapitel mit drei sol-artigen Items hat zu wenige verschiedene Formen", t => {
+  const dir = mutated(t, parts => {
+    // Alle Items mit forms außer drei werden zu sol-artigen (6 Fälle, 2 verschiedene Formen).
+    let rich = 0;
+    for (let l = 0; l < 5; l++) a1Lesson(parts, l).items.forEach(it => {
+      if (!it.forms) return;
+      if (rich++ < 3) it.forms = clone(SOL); else delete it.forms;
+    });
+  });
+  const strict = run(["--dir", dir, "--strict", "a1-obrok"]);
+  assert.equal(strict.code, 1, strict.out);
+  assert.match(strict.out, /Kapitel: nur 0 Items mit forms aus mindestens 4 verschiedenen Formen \(mindestens 3\)/);
+});
+
+test("Vorlage: Kapitel mit drei more-artigen Items besteht", t => {
+  const dir = mutated(t, parts => {
+    let rich = 0;
+    for (let l = 0; l < 5; l++) a1Lesson(parts, l).items.forEach(it => {
+      if (!it.forms) return;
+      if (rich++ < 3) it.forms = clone(MORE); else delete it.forms;
+    });
+  });
+  const strict = run(["--dir", dir, "--strict", "a1-obrok"]);
+  assert.equal(strict.code, 0, strict.out);
+});
+
+test("Vorlage: zwei more-artige und viele sol-artige Items genügen nicht", t => {
+  const dir = mutated(t, parts => {
+    let n = 0;
+    for (let l = 0; l < 5; l++) a1Lesson(parts, l).items.forEach(it => {
+      if (!it.forms) return;
+      it.forms = clone(n++ < 2 ? MORE : SOL);
+    });
+  });
+  const strict = run(["--dir", dir, "--strict", "a1-obrok"]);
+  assert.equal(strict.code, 1, strict.out);
+  assert.match(strict.out, /Kapitel: nur 2 Items mit forms aus mindestens 4 verschiedenen Formen/);
 });
 
 // ---------- Querverweise ----------
