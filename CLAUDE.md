@@ -73,4 +73,5 @@ Oberfläche Deutsch, Zielsprache Kroatisch.
 ```
 npx http-server -p 8123 -c-1 .     # dann http://localhost:8123
 node scripts/validate-course.js
+node --test "tests/*.test.js"      # Unit-Tests der Lern-Engine (Node 22; `node --test tests/` findet hier nichts)
 ```
