@@ -67,7 +67,7 @@
     },
     "verb-future": {
       title: "Futur",
-      short: "Das Futur bildet man mit ću, ćeš, će, ćemo, ćete, će und dem Infinitiv: Sutra ću ići na more. Steht der Infinitiv vor ću, fällt das -i weg: Putovat ću."
+      short: "Das Futur bildet man mit ću, ćeš, će, ćemo, ćete, će und dem Infinitiv: Sutra ću ići na more. Bei Infinitiven auf -ti fällt vor ću das -i weg: Putovat ću. (Verben auf -ći behalten es: Ići ću.)"
     },
     "verb-modal": {
       title: "Modalverben",

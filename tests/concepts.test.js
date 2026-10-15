@@ -43,6 +43,14 @@ test("CONCEPTS: Beispieltext für Akkusativ", () => {
   );
 });
 
+test("CONCEPTS: Futur-Regel gilt nur für -ti, Verben auf -ći behalten das -i", () => {
+  const s = CONCEPTS["verb-future"].short;
+  assert.ok(s.includes("Putovat ću"));
+  assert.ok(s.includes("-ti"));
+  assert.ok(s.includes("Ići ću"));
+  assert.ok(!s.includes("ić ću"));
+});
+
 test("Listen: POS, CASES und CATEGORIES wie im Brief", () => {
   assert.deepEqual(POS, ["noun", "verb", "adj", "adv", "pron", "num", "prep", "conj", "part", "interj", "phrase"]);
   assert.deepEqual(CASES, ["nom", "gen", "dat", "acc", "ins", "loc", "voc"]);
