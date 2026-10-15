@@ -79,6 +79,12 @@ test("missingDiacritics: đ darf als dj getippt werden und zählt als fehlend", 
   assert.deepEqual(missingDiacritics("kuca", "kuća"), ["ć"]);
 });
 
+test("missingDiacritics: anderes Diakritikum auf demselben Grundbuchstaben (ć statt č) zählt als fehlend", () => {
+  assert.deepEqual(missingDiacritics("ćaša", "čaša"), ["č"]);
+  assert.deepEqual(missingDiacritics("kuča", "kuća"), ["ć"]);
+  assert.deepEqual(missingDiacritics("šaša", "čaša"), [], "š ist kein c – kein fehlendes Diakritikum");
+});
+
 test("missingDiacritics: ohne Diakritika im Ziel oder bei falscher Antwort leer", () => {
   assert.deepEqual(missingDiacritics("kava", "kava"), []);
   assert.deepEqual(missingDiacritics("", "čaša"), []);

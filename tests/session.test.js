@@ -512,6 +512,37 @@ test("insertRetry: viele falsche Antworten in der ersten Session-Hälfte – gan
   }
 });
 
+test("buildSession: focus – Endungs-Aufgaben aus DNA-Items fragen den Fokus-Fall, neue Wörter bleiben gemischt", () => {
+  const kuca = F.DNA_ITEMS.find(it => it.hr === "kuća").key;
+  let dnaEndings = 0;
+  const newCases = new Set();
+  for (const hasTTS of TTS) {
+    for (const seed of SEEDS) {
+      const tasks = buildSession(opts(seed, hasTTS, { focus: ["case-acc"] }));
+      assert.deepEqual(checkSession(tasks, { hasTTS, size: 20 }), [], `seed ${seed}`);
+      for (const t of tasks) {
+        if (t.type !== "ending") continue;
+        if (t.source === "dna" && t.key === kuca) {
+          dnaEndings++;
+          assert.deepEqual(t.concepts, ["case-acc"], `seed ${seed}`);
+          assert.equal(t.answer, "kuću");
+        }
+        if (t.source === "new") newCases.add(t.concepts[0]);
+      }
+    }
+  }
+  assert.ok(dnaEndings > 20, "DNA-Endungen zu kuća: " + dnaEndings);
+  assert.ok(newCases.size >= 3, "neue Wörter fragen weiter verschiedene Fälle: " + [...newCases]);
+});
+
+test("buildSession: ohne focus (oder mit leerem focus) gleiche Session wie bisher", () => {
+  for (const seed of SEEDS.slice(0, 40)) {
+    const a = buildSession(opts(seed, true));
+    const b = buildSession(opts(seed, true, { focus: [] }));
+    assert.deepEqual(b, a, `seed ${seed}`);
+  }
+});
+
 // ---------------------------------------------------------------- Browser
 
 test("Browser: engine/session.js hängt sich nach core, distractors und tasks an window.KorakEngine", () => {

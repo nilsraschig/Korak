@@ -187,7 +187,8 @@
 
   // Baut die Folge gierig auf: an jeder Stelle zufällig (Wörter mit mehr offenen Vorkommen eher) unter den
   // Einheiten, die mit der Vorgänger-Aufgabe weder Wort noch Typ teilen und die Restfolge lösbar lassen.
-  function arrange(units, ctx, tw, rng) {
+  // dnaCtx: wie ctx, für Fehler-DNA-Einheiten zusätzlich mit `focus` (schwache Konzepte).
+  function arrange(units, ctx, tw, rng, dnaCtx) {
     const out = [];
     const recognized = new Set();
     const remByKey = new Map();
@@ -223,7 +224,7 @@
       }
       for (const type of types) {
         if (prev && prev.type === type) continue;
-        const task = buildTask(type, u.item, ctx);
+        const task = buildTask(type, u.item, u.source === "dna" && dnaCtx ? dnaCtx : ctx);
         if (task) { task.source = u.source; return task; }
       }
       return null;
@@ -260,7 +261,8 @@
   }
 
   // opts: { newItems, dueItems?, dnaItems?, pool, lesson?, dialogues?, authored?: Task[][], size = 20,
-  //         mix = {new:.6, due:.25, dna:.15}, weights?: Plan.weights() | null, hasTTS, rng }
+  //         mix = {new:.6, due:.25, dna:.15}, weights?: Plan.weights() | null, hasTTS, rng,
+  //         focus?: string[] (schwache Konzepte – Endungs-Aufgaben aus DNA-Items fragen diese Fälle) }
   function buildSession(opts) {
     const o = opts || {};
     const rng = typeof o.rng === "function" ? o.rng : Math.random;
@@ -280,12 +282,14 @@
     src.blocks = (Array.isArray(o.authored) ? o.authored : []).map(b => authoredTask(b, hasTTS)).filter(Boolean);
     const pool = Array.isArray(o.pool) ? o.pool : src.fresh.concat(src.due, src.dna);
     const ctx = { pool, lesson: o.lesson, dialogues: o.dialogues, hasTTS, rng };
+    const focus = Array.isArray(o.focus) ? o.focus.filter(c => typeof c === "string") : [];
+    const dnaCtx = focus.length ? Object.assign({}, ctx, { focus }) : null;
     const tw = typeWeights(o.weights, hasTTS);
 
     // Sackgasse → bis zu 50 Neustarts mit den nächsten Zufallswerten, danach die längste gefundene Folge.
     let best = [];
     for (let attempt = 0; attempt <= RESTARTS; attempt++) {
-      const res = arrange(allocate(src, { size, mix }, ctx, rng), ctx, tw, rng);
+      const res = arrange(allocate(src, { size, mix }, ctx, rng), ctx, tw, rng, dnaCtx);
       if (res.complete) return res.tasks;
       if (res.tasks.length > best.length) best = res.tasks;
     }

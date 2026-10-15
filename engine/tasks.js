@@ -181,10 +181,12 @@
     }
   }
 
+  // ctx.focus (Konzept-IDs, z. B. ["case-acc"]): Fälle aus dem Fokus werden bevorzugt gefragt (Fehler-DNA).
   function endingTask(item, ctx, rng) {
     const cases = endingCases(item);
     if (!cases.length) return null;
-    const caseKey = pick(cases, rng);
+    const focus = Array.isArray(ctx.focus) ? cases.filter(k => ctx.focus.includes("case-" + k)) : [];
+    const caseKey = pick(focus.length ? focus : cases, rng);
     const answer = item.forms[caseKey];
     const options = makeOptions(answer, endingOptions(item, caseKey, { n: MAX_OPTIONS - 1, rng }), rng);
     if (!options) return null;
@@ -283,10 +285,11 @@
 
   // ---- Tipp-Auswertung
 
-  const SPECIAL_CLASS = { "č": "[čc]", "ć": "[ćc]", "š": "[šs]", "ž": "[žz]", "đ": "(?:đ|dj|d)" };
+  const SPECIAL_CLASS = { "č": "[čćc]", "ć": "[ćčc]", "š": "[šs]", "ž": "[žz]", "đ": "(?:đ|dj|d)" };
 
-  // Vergleicht Antwort und Ziel: exakt (nach norm) -> ok; fehlen nur Diakritika -> ok und near
-  // (für đ im Ziel sind „đ“, „dj“ und „d“ zulässig); sonst nicht ok. `missing` nennt die fehlenden Buchstaben.
+  // Vergleicht Antwort und Ziel: exakt (nach norm) -> ok; fehlen nur Diakritika oder steht ein falsches
+  // auf demselben Grundbuchstaben (ć statt č) -> ok und near (für đ im Ziel sind „đ“, „dj“ und „d“ zulässig);
+  // sonst nicht ok. `missing` nennt die betroffenen Buchstaben des Ziels.
   function typingResult(answer, target) {
     const a = norm(answer).normalize("NFC");
     const t = norm(target).normalize("NFC");

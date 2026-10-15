@@ -451,6 +451,33 @@ test("ending: nur 2 Optionen, wenn das Wort kaum verschiedene Formen hat; sonst 
   assert.equal(buildTask("ending", dead, ctx(1)), null, "keine falsche Option möglich -> null");
 });
 
+test("ending: ctx.focus fragt bevorzugt den Fall des Fokus-Konzepts, sonst wie bisher", () => {
+  for (const seed of SEEDS) {
+    const task = buildTask("ending", byHr("kava"), ctx(seed, { focus: ["case-acc"] }));
+    assert.deepEqual(task.concepts, ["case-acc"], "Seed " + seed);
+    assert.equal(task.prompt, "Vidim ___.");
+    assert.equal(task.answer, "kavu");
+    checkOptions(task, "focus Seed " + seed);
+  }
+  const two = new Set();
+  for (const seed of SEEDS) {
+    const task = buildTask("ending", byHr("kava"), ctx(seed, { focus: ["case-loc", "gender", "case-gen"] }));
+    assert.ok(["case-loc", "case-gen"].includes(task.concepts[0]), task.concepts[0]);
+    two.add(task.concepts[0]);
+  }
+  assert.equal(two.size, 2, "beide Fokus-Fälle kommen vor");
+  // sok: acc = nom wird nie gefragt – Fokus „Akkusativ“ fällt auf die übrigen Fälle zurück
+  const rest = new Set();
+  for (const seed of SEEDS) rest.add(buildTask("ending", byHr("sok"), ctx(seed, { focus: ["case-acc"] })).concepts[0]);
+  assert.deepEqual([...rest].sort(), ["case-gen", "case-ins", "case-loc"]);
+  // Fokus ohne Fall-Konzept oder leer: identisch zur Aufgabe ohne Fokus (gleicher Seed)
+  for (const seed of SEEDS.slice(0, 50)) {
+    const plainTask = buildTask("ending", byHr("kava"), ctx(seed));
+    assert.deepEqual(buildTask("ending", byHr("kava"), ctx(seed, { focus: ["diacritics-c"] })), plainTask);
+    assert.deepEqual(buildTask("ending", byHr("kava"), ctx(seed, { focus: [] })), plainTask);
+  }
+});
+
 // ---------------------------------------------------------------- Richtig / Falsch
 
 test("truefalse: über 200 Seeds sowohl Richtig als auch Falsch; bei Falsch ist de' ≠ item.de", () => {
@@ -615,11 +642,19 @@ test("typingResult: anderes Wort -> nicht ok", () => {
   assert.equal(typingResult("ca", "čaša").ok, false);
 });
 
-test("typingResult: falscher Buchstabe mit Diakritikum ist kein „near“ (č ≠ ć, kein Zusatz-Diakritikum)", () => {
-  assert.equal(typingResult("ćaša", "čaša").ok, false);
-  assert.equal(typingResult("čaša", "casa").ok, false);
-  assert.equal(typingResult("šaša", "čaša").ok, false);
+test("typingResult: falsches Diakritikum auf demselben Grundbuchstaben (ć statt č) ist „near“, missing nennt die Buchstaben des Ziels", () => {
+  assert.deepEqual(typingResult("ćaša", "čaša"), { ok: true, near: true, missing: ["č"] });
+  assert.deepEqual(typingResult("ćasa", "čaša"), { ok: true, near: true, missing: ["č", "š"] });
+  assert.deepEqual(typingResult("kuča", "kuća"), { ok: true, near: true, missing: ["ć"] });
+  assert.deepEqual(typingResult("Laku noč", "Laku noć"), { ok: true, near: true, missing: ["ć"] });
+  assert.deepEqual(typingResult("cevapćići", "ćevapčići"), { ok: true, near: true, missing: ["ć", "č"] });
+});
+
+test("typingResult: kein „near“ bei anderem Grundbuchstaben oder Zusatz-Diakritikum", () => {
+  assert.equal(typingResult("čaša", "casa").ok, false, "Zusatz-Diakritikum");
+  assert.equal(typingResult("šaša", "čaša").ok, false, "š statt č: anderer Grundbuchstabe");
   assert.equal(typingResult("sasa", "čaša").ok, false);
+  assert.equal(typingResult("šena", "žena").ok, false, "š statt ž: anderer Grundbuchstabe");
 });
 
 test("typingResult: für đ im Ziel sind „đ“, „dj“ und „d“ zulässig, missing nennt „đ“", () => {
@@ -641,7 +676,7 @@ test("typingResult: Ziel mit „dj“ bleibt strikt (djed), „đed“ ist nicht
 });
 
 test("typingResult: missing stimmt mit missingDiacritics aus core überein", () => {
-  for (const [answer, target] of [["casa", "čaša"], ["Durdica", "Đurđica"], ["Djurdjica", "Đurđica"], ["zena", "žena"], ["cacak", "čačak"]]) {
+  for (const [answer, target] of [["casa", "čaša"], ["Durdica", "Đurđica"], ["Djurdjica", "Đurđica"], ["zena", "žena"], ["cacak", "čačak"], ["ćaša", "čaša"], ["kuča", "kuća"]]) {
     assert.deepEqual(typingResult(answer, target).missing, missingDiacritics(answer, target), answer);
   }
 });

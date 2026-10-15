@@ -52,7 +52,8 @@
   // Basisbuchstabe eines kroatischen Sonderbuchstabens (đ → d), sonst der Buchstabe selbst.
   const BASE_LETTER = { "č": "c", "ć": "c", "š": "s", "ž": "z", "đ": "d" };
 
-  // Buchstaben aus `target`, die in `answer` ohne Diakritikum stehen, z. B. ["č", "š"].
+  // Buchstaben aus `target`, die in `answer` ohne (oder mit falschem) Diakritikum stehen, z. B. ["č", "š"].
+  // Falsch heißt: anderes Diakritikum auf demselben Grundbuchstaben (ć statt č).
   // Jeder Buchstabe erscheint einmal (in der Reihenfolge seines ersten Auftretens).
   // Für đ gilt auch die Ersatzschreibung „dj“ als fehlend.
   function missingDiacritics(answer, target) {
@@ -68,7 +69,7 @@
       } else if (ch === "đ" && a.slice(j, j + 2) === "dj") {
         if (!missing.includes(ch)) missing.push(ch);
         j += 2;
-      } else if (a[j] === base) {
+      } else if (a[j] === base || BASE_LETTER[a[j]] === base) {
         if (!missing.includes(ch)) missing.push(ch);
         j++;
       } else {
