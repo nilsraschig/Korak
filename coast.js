@@ -26,18 +26,18 @@
     ["a2-vrijeme", "Split", 334, 1190, "palace", "r"],
     ["a2-novac", "Omiš", 350, 1260, "cliff", "r"],
     ["a2-tijelo", "Makarska", 360, 1360, "mountain", "r"],
-    ["a2-ordinacija", "Bol", 268, 1297, "beach", "l"],
-    ["a2-stanovanje", "Hvar", 206, 1348, "lavender", "l"],
-    ["a2-susjedi", "Vis", 108, 1402, "boat", "r"],
-    ["a2-konoba", "Korčula", 300, 1512, "roundtower", "r"],
-    ["a2-kolodvor", "Orebić", 266, 1566, "anchor", "l"],
-    ["a2-ured", "Mljet", 250, 1760, "island", "l"],
+    ["b1-ordinacija", "Bol", 268, 1297, "beach", "l"],
+    ["b1-stanovanje", "Hvar", 206, 1348, "lavender", "l"],
+    ["b1-susjedi", "Vis", 108, 1402, "boat", "r"],
+    ["b1-konoba", "Korčula", 300, 1512, "roundtower", "r"],
+    ["b1-kolodvor", "Orebić", 266, 1566, "anchor", "l"],
+    ["b1-ured", "Mljet", 250, 1760, "island", "l"],
     ["b1-misljenje", "Ston", 338, 1832, "walls", "r"],
     ["b1-karijera", "Trsteno", 354, 1944, "tree", "r"],
     ["b1-drustvo", "Dubrovnik", 364, 2000, "citywalls", "l"]
   ].map(([id, name, x, y, mark, side], i) => ({ id, name, x, y, mark, side, n: i + 1 }));
 
-  const CROP = { A1: [0, 440], A2: [300, 1810], B1: [1700, 2090] };
+  const CROP = { A1: [0, 440], A2: [300, 1400], B1: [1250, 2090] };
   const REGION = { A1: "Istrien & Kvarner", A2: "Dalmatien", B1: "Süddalmatien" };
 
   // Festlandküste (Land liegt rechts/östlich)

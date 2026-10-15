@@ -110,7 +110,8 @@
     if (r.last_lesson) s.lastLesson = r.last_lesson;
     if (r.selected_level) s.selectedLevel = r.selected_level;
     if (typeof r.speech_rate === "number") s.rate = r.speech_rate;
-    return s;
+    // Zeilen mit alten Lektions-IDs (verschobene Kapitel, z. B. a2-13-* → b1-4-*) umbenennen – idempotent (engine/migrate.js).
+    return window.KorakEngine && KorakEngine.migrateState ? KorakEngine.migrateState(s) : s;
   }
 
   // ---------- Öffentliche Schnittstelle ----------

@@ -223,7 +223,8 @@
     localStorage.removeItem(MODE_KEY);
 
     const cache = readJSON(cacheKey(user.id));
-    adopt(cache ? cache.state : defaults());
+    // Offline-Cache kann noch alte Lektions-IDs enthalten (z. B. a2-13-*) – migrateSaved (app.js) ruft KorakEngine.migrateState.
+    adopt(cache ? migrateSaved(cache.state) : defaults());
     Account.updatedAt = cache && cache.updatedAt;
     Account.base = cache && cache.base;
     Account.version = 0;
