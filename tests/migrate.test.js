@@ -59,10 +59,29 @@ test("migrateState: bildet completed, testStars, items und lastLesson ab", () =>
   assert.deepEqual(out.items["b1-6-2-4"], { seen: 2 });
   assert.deepEqual(out.items["dialog-b1-7-3"], { seen: 1 });
   assert.equal(out.lastLesson, "b1-8-5");
+  // lastLesson ist nach B1 gewandert → das dazu gewählte Level auch („Weiterlernen“ zeigt sonst A2)
+  assert.equal(out.selectedLevel, "B1");
   // übrige Felder bleiben
   assert.equal(out.xp, 420);
   assert.equal(out.streak, 3);
-  assert.equal(out.selectedLevel, "A2");
+});
+
+test("migrateState: selectedLevel folgt nur einer umbenannten lastLesson aus A2", () => {
+  // umbenannt + A2 → B1
+  assert.equal(migrateState({ lastLesson: "a2-13-1", selectedLevel: "A2" }).selectedLevel, "B1");
+  assert.equal(migrateState({ lastLesson: "a2-18-test", selectedLevel: "A2" }).selectedLevel, "B1");
+  // lastLesson nicht verschoben → bleibt A2
+  assert.equal(migrateState({ lastLesson: "a2-3-1", selectedLevel: "A2" }).selectedLevel, "A2");
+  // schon neue ID (zweiter Lauf / spätere Wahl des Nutzers) → bleibt
+  assert.equal(migrateState({ lastLesson: "b1-4-2", selectedLevel: "A2" }).selectedLevel, "A2");
+  // anderes Level bewusst gewählt → bleibt
+  assert.equal(migrateState({ lastLesson: "a2-13-1", selectedLevel: "A1" }).selectedLevel, "A1");
+  // ohne selectedLevel kein neues Feld
+  assert.equal("selectedLevel" in migrateState({ lastLesson: "a2-13-1" }), false);
+  // idempotent
+  const once = migrateState({ lastLesson: "a2-15-2", selectedLevel: "A2" });
+  assert.deepEqual(once, { lastLesson: "b1-6-2", selectedLevel: "B1" });
+  assert.deepEqual(migrateState(once), once);
 });
 
 test("migrateState: idempotent", () => {

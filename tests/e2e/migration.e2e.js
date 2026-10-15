@@ -45,6 +45,9 @@ const today = new Date().toISOString().slice(0, 10);
   ok(sa.seen === 3 && noOld(sa.items), 'Wiederholungsplan umbenannt: b1-4-1-0 (seen 3)');
   ok(sa.lastLesson === 'b1-4-1', 'lastLesson umbenannt: ' + sa.lastLesson);
   ok(/6 von 27 Orten/.test(await g.textContent('#journeyLabel')), 'Startseite: ' + await g.textContent('#journeyLabel'));
+  // vor openLevel prüfen – das setzt selectedLevel selbst und würde einen Fehler verdecken
+  const cont = await g.evaluate(() => ({lv: state.selectedLevel, next: nextLesson().id, meta: document.getElementById('continueMeta').textContent}));
+  ok(cont.lv === 'B1' && cont.next === 'b1-4-2' && /In Bol/.test(cont.meta), `„Weiterlernen“ führt ins umgezogene Kapitel: selectedLevel ${cont.lv}, ${cont.next} – ${cont.meta}`);
 
   await g.evaluate(() => { show('levels'); openLevel('B1'); }); await g.waitForSelector('#ch-b1-ordinacija');
   ok(/Kapitel 1 in Bol/.test(await g.textContent('#ch-b1-ordinacija .chapterNo')) && await g.textContent('#ch-b1-ordinacija h2') === 'Beim Hausarzt', 'B1 beginnt mit „Beim Hausarzt“ in Bol');
@@ -87,7 +90,8 @@ const today = new Date().toISOString().slice(0, 10);
   await u.fill('#authUser', 'ivana'); await u.fill('#authPass', 'geheim123'); await u.click('#authSubmit');
   await u.waitForSelector('#home.active');
   await u.waitForFunction(() => Account.status === 'saved', null, {timeout: 10000}).catch(() => {});
-  const su = await u.evaluate(() => ({completed: state.completed, items: Object.keys(state.items), stars: state.testStars, lastLesson: state.lastLesson, xp: state.xp}));
+  const su = await u.evaluate(() => ({completed: state.completed, items: Object.keys(state.items), stars: state.testStars, lastLesson: state.lastLesson, xp: state.xp, lv: state.selectedLevel, meta: document.getElementById('continueMeta').textContent}));
+  ok(su.lv === 'B1' && /In Bol/.test(su.meta), `selected_level „A2“ zieht mit nach B1, „Weiterlernen“: ${su.meta}`);
   ok(su.completed.includes('b1-7-test') && konoba.every(id => su.completed.includes(id.replace('a2-16', 'b1-7'))) && noOld(su.completed), 'Zustand nach dem Login: b1-7-1 … b1-7-test');
   ok(su.items.includes('b1-7-2-0') && su.items.includes('dialog-b1-7-1') && noOld(su.items) && su.stars['b1-7-test'] === 3 && su.lastLesson === 'b1-7-test' && su.xp === 640, 'Items, Sterne, letzte Lektion umbenannt, XP gleich');
   ok(/1 von 27 Orten/.test(await u.textContent('#journeyLabel')), 'Startseite zeigt den Fortschritt: ' + await u.textContent('#journeyLabel'));

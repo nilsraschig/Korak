@@ -62,7 +62,8 @@
     return a;
   }
 
-  // Neue Kopie des Zustands mit umbenannten IDs in completed, testStars, items und lastLesson.
+  // Neue Kopie des Zustands mit umbenannten IDs in completed, testStars, items und lastLesson
+  // (und selectedLevel, wenn es zur umgezogenen lastLesson gehörte).
   // Die Eingabe bleibt unverändert; migrateState(migrateState(s)) ist tief gleich migrateState(s).
   function migrateState(state) {
     if (!isObj(state)) return state;
@@ -99,7 +100,14 @@
       out.items = items;
     }
 
-    if (typeof out.lastLesson === "string") out.lastLesson = mapLessonId(out.lastLesson);
+    if (typeof out.lastLesson === "string") {
+      const id = mapLessonId(out.lastLesson);
+      // startLesson setzt selectedLevel auf das Level der Lektion. Ist sie mitsamt Kapitel umgezogen (A2 → B1),
+      // zieht die Auswahl mit – sonst zeigt „Weiterlernen“ eine erledigte A2-Lektion. Idempotent: die neue ID
+      // wird nie wieder umbenannt, eine spätere Wahl des Nutzers bleibt also unberührt.
+      if (id !== out.lastLesson && out.selectedLevel === out.lastLesson.slice(0, 2).toUpperCase()) out.selectedLevel = id.slice(0, 2).toUpperCase();
+      out.lastLesson = id;
+    }
     return out;
   }
 
