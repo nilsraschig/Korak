@@ -120,6 +120,19 @@ const startAt = (p, test) => p.evaluate(test => {
   console.log('    Typen:', s1.kinds.join(', '), '· Quellen:', s1.sources.join(', '));
   const many = await p.evaluate(() => { const out = []; const l = lessonById('a1-3-1'); for (let s = 1; s <= 30; s++) { const t = sessionFor('lesson', l, KorakEngine.makeRng(s)); out.push(...KorakEngine.checkSession(t, {size: 20}).map(e => `Seed ${s}: ${e}`)); } return out; });
   ok(many.length === 0, '30 weitere Lektions-Sessions (Seeds 1–30) regelkonform' + (many.length ? ': ' + many.slice(0, 3).join(' | ') : ''));
+  // Ruling 16: Lektion zur Hälfte gesehen (6 von 12 Items, nichts fällig, keine Fehler-DNA) → alle Lektions-Items, ≥ 10 Wörter
+  const half = await p.evaluate(() => {
+    const l = lessonById('a1-3-1'), its = lessonItems(l), out = [], words = [];
+    its.slice(0, 6).forEach(it => { state.items[it.key] = {box: 2, due: Date.now() + 3 * 864e5, seen: 1, correct: 1, wrong: 0}; });
+    for (let s = 1; s <= 20; s++) {
+      const t = sessionFor('lesson', l, KorakEngine.makeRng(s));
+      words.push(new Set(t.flatMap(x => x.keys || [])).size);
+      out.push(...KorakEngine.checkSession(t, {size: 20, minWords: 10}).map(e => `Seed ${s}: ${e}`));
+    }
+    its.slice(0, 6).forEach(it => { delete state.items[it.key]; });
+    return {due: due().length, errors: out, words: Math.min(...words)};
+  });
+  ok(half.due === 0 && half.errors.length === 0 && half.words >= 10, `6 von 12 Items gesehen, nichts fällig: 20 Sessions mit ≥ 10 Wörtern (mindestens ${half.words})` + (half.errors.length ? ': ' + half.errors.slice(0, 3).join(' | ') : ''));
 
   console.log('2) „Endung wählen“ (per Seed erzwungen)');
   const e = await startAt(p, "t.type === 'ending' && t.concepts[0] === 'case-acc'");
@@ -169,6 +182,21 @@ const startAt = (p, test) => p.evaluate(test => {
   const ruling9 = await p.evaluate(() => { const l = lessonById('a1-3-1'), it = lessonItems(l).find(i => i.hr === 'čaša'); startSession([Object.assign(KorakEngine.buildTask('input-hr', it, {pool: lessonItems(l)}), {source: 'new'})], 'lesson', l); return true; });
   await p.fill('.textInput', 'ćaša'); await p.press('.textInput', 'Enter');
   ok(ruling9 && await p.textContent('#fbTitle') === 'Fast perfekt – achte auf č', 'Falsches Diakritikum „ćaša“ → „Fast perfekt – achte auf č“');
+  // Ruling 17: Sonderzeichen zählen nur beim Tippen; bei „Fast perfekt“ nur die fehlenden Buchstaben als Fehler
+  const dnaOf = () => p.evaluate(k => JSON.parse(JSON.stringify(state.items[k].dna)), casa);
+  const before = await dnaOf();
+  await p.evaluate(() => { const l = lessonById('a1-3-1'), it = lessonItems(l).find(i => i.hr === 'čaša'); startSession([Object.assign(KorakEngine.buildTask('input-hr', it, {pool: lessonItems(l)}), {source: 'new'})], 'lesson', l); });
+  await p.fill('.textInput', 'časa'); await p.press('.textInput', 'Enter');
+  const afterNear = await dnaOf();
+  const d = (a, b, c, i) => b[c][i] - a[c][i];
+  ok(await p.textContent('#fbTitle') === 'Fast perfekt – achte auf š' && d(before, afterNear, 'diacritics-sz', 1) === 1 && d(before, afterNear, 'diacritics-sz', 0) === 0 &&
+     d(before, afterNear, 'diacritics-c', 0) === 1 && d(before, afterNear, 'diacritics-c', 1) === 0,
+     `„časa“ (nur š fehlt): diacritics-sz +1 falsch, das richtig getippte č zählt richtig: ${JSON.stringify(before)} → ${JSON.stringify(afterNear)}`);
+  for (const wrong of [false, true]) {
+    await p.evaluate(() => { const l = lessonById('a1-3-1'), it = lessonItems(l).find(i => i.hr === 'čaša'); startSession([Object.assign(KorakEngine.buildTask('choice-de', it, {pool: lessonItems(l)}), {source: 'new'})], 'lesson', l); });
+    await answer(p, wrong);
+  }
+  ok(JSON.stringify(await dnaOf()) === JSON.stringify(afterNear), 'Auswahlaufgabe zu „čaša“ (richtig und falsch): keine Sonderzeichen-Zählung');
 
   console.log('5) Ganze Session mit Fehlern (auch die letzte Aufgabe): Nachbar-Regeln bis zum Ende');
   await p.evaluate(() => startLesson('a1-3-1'));
@@ -229,7 +257,7 @@ const startAt = (p, test) => p.evaluate(test => {
     const out = [], l = lessonById('a1-3-1');
     for (let s = 1; s <= 25; s++) for (const [kind, les] of [['lesson', l], ['test', lessonById('a1-2-test')], ['random', null]]) {
       const t = sessionFor(kind, les, KorakEngine.makeRng(s));
-      out.push(...KorakEngine.checkSession(t, {hasTTS: false, minWords: 0}).map(e => `${kind} ${s}: ${e}`));
+      out.push(...KorakEngine.checkSession(t, {hasTTS: false}).map(e => `${kind} ${s}: ${e}`));
     }
     return {hasTts: HAS_TTS, errors: out};
   });
