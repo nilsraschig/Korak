@@ -17,7 +17,8 @@ let fails = 0; const ok = (c, m) => { console.log((c ? '  ✔ ' : '  ✘ ') + m)
   await p.evaluate(() => [...document.querySelectorAll('#answerArea .choice')].find(b => b.dataset.value !== queue[pos].answer).click()); await p.click('#check');
   const fb = await p.textContent('#fbText');
   ok(fb.includes('Besser: „Što nam preporučujete?“'), 'Falsche Antwort: Begründung + bessere Antwort: ' + fb.replace(/\n/g, ' | ').slice(0, 90));
-  ok(await p.evaluate(() => queue.length) === 4, 'Falscher Zug wird später wiederholt');
+  // Task 8 / Ruling 10: Die Wiederholung käme direkt nach Zug 3 (zweimal Rollenspiel) – davor steht eine kurze Füllaufgabe.
+  ok(await p.evaluate(() => queue.length === 5 && queue[4].turn === 2 && queue[4].type === 'roleplay' && queue[3].filler && queue[3].type !== 'roleplay'), 'Falscher Zug wird später wiederholt (nach einer Füllaufgabe)');
   await p.screenshot({path: shot('type-roleplay.png')});
   // Szenario
   await run('sc-16-2'); await p.waitForTimeout(300);

@@ -321,11 +321,11 @@ details.culture p{padding:0 0 14px;line-height:1.55}
 .cultureCard p{line-height:1.55}
 
 /* ---------- Üben ---------- */
-.practiceGrid{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:auto auto auto;gap:12px;margin-bottom:48px}
+.practiceGrid{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:auto auto auto auto;gap:12px;margin-bottom:48px}
 .action{position:relative;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:18px 20px;border:1.5px solid var(--line);border-radius:var(--r-l);background:var(--paper);text-align:left;transition:transform .25s var(--ease),box-shadow .25s,border-color .25s}
 .action:hover{transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--sand);border-color:var(--ink)}
 .action:active{transform:translate(1px,1px);box-shadow:none}
-.actionMain{grid-row:span 3;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;align-content:space-between;padding:26px 26px 40px;background:var(--deep);border-color:var(--deep);color:var(--paper);overflow:hidden}
+.actionMain{grid-row:span 4;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;align-content:space-between;padding:26px 26px 40px;background:var(--deep);border-color:var(--deep);color:var(--paper);overflow:hidden}
 .actionMain::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:var(--mosaic-band) repeat-x 0 0/96px 14px}
 .actionMain .actionIcon{background:rgba(251,247,238,.12);color:var(--sun)}
 .actionMain .actionText{grid-column:1/-1;align-self:end}

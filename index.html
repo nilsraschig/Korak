@@ -204,6 +204,7 @@
   <div class="practiceGrid">
     <button id="practiceDue" class="action actionMain"><span class="actionIcon"><svg class="ico"><use href="#i-repeat"/></svg></span><span class="actionText"><b>Fällige Wiederholungen</b><small id="practiceDueCount">0 Aufgaben bereit</small></span><svg class="ico chev"><use href="#i-next"/></svg></button>
     <button id="practiceWrong" class="action"><span class="actionIcon warn"><svg class="ico"><use href="#i-alert"/></svg></span><span class="actionText"><b>Oft falsch</b><small id="practiceWrongCount">Noch keine Fehler</small></span><svg class="ico chev"><use href="#i-next"/></svg></button>
+    <button id="practiceDna" class="action"><span class="actionIcon"><svg class="ico"><use href="#i-bulb"/></svg></span><span class="actionText"><b>Schwachstelle üben</b><small id="practiceDnaCount">Noch keine Stolpersteine</small></span><svg class="ico chev"><use href="#i-next"/></svg></button>
     <button id="practiceRandom" class="action"><span class="actionIcon"><svg class="ico"><use href="#i-shuffle"/></svg></span><span class="actionText"><b>Zufällig mischen</b><small>Aus allen freigeschalteten Lektionen</small></span><svg class="ico chev"><use href="#i-next"/></svg></button>
     <button id="practiceTests" class="action"><span class="actionIcon"><svg class="ico"><use href="#i-star"/></svg></span><span class="actionText"><b>Kapiteltests</b><small>Sterne verbessern</small></span><svg class="ico chev"><use href="#i-next"/></svg></button>
   </div>
@@ -230,6 +231,7 @@
     </dl>
   </div>
   <section class="block"><h2>Deine Kurse</h2><div id="profileLevels" class="rows"></div></section>
+  <section class="block"><h2>Deine Stolpersteine</h2><div id="profileWeak" class="rows"></div></section>
   <section class="block voiceBlock"><h2>Aussprache</h2>
     <div class="voiceFields">
       <div class="field"><label for="voiceSelect">Stimme</label><select id="voiceSelect"></select></div>
@@ -333,7 +335,7 @@
 </nav>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
-<script src="engine/core.js"></script><script src="engine/concepts.js"></script><script src="engine/migrate.js"></script>
+<script src="engine/core.js"></script><script src="engine/concepts.js"></script><script src="engine/migrate.js"></script><script src="engine/distractors.js"></script><script src="engine/tasks.js"></script><script src="engine/session.js"></script><script src="engine/dna.js"></script>
 <script src="cloud.js"></script>
 <script src="course/a1.js"></script><script src="course/a2.js"></script><script src="course/b1.js"></script><script src="course-data.js"></script><script src="vala.js"></script><script src="coast.js"></script><script src="sound.js"></script><script src="culture-data.js"></script><script src="exercise-data.js"></script><script src="plan.js"></script><script src="app.js"></script><script src="onboarding.js"></script><script src="account.js"></script><script src="social.js"></script><script src="dictionary.js"></script>
 </body></html>
