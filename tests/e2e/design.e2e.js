@@ -58,6 +58,9 @@ let fails = 0; const ok = (c, m) => { console.log((c ? '  ✔ ' : '  ✘ ') + m)
   ok(/nächster Halt Rovinj/.test(await p.textContent('#doneSouvenir')), 'Abschluss nennt nächsten Halt');
   await p.evaluate(() => { show('levels'); openLevel('A1') });
   const x0 = await p.evaluate(() => document.querySelector('.valaMarker').style.top);
+  // Startpunkt der Reise kommt aus Coast.CROP (eine Quelle für den Kartenausschnitt, auch in renderMap)
+  const top0 = await p.evaluate(() => { const c = Coast.CROP && Coast.CROP.A1, s = Coast.STATIONS[0]; return c ? (s.y - c[0]) / (c[1] - c[0]) * 100 : null; });
+  ok(top0 !== null && Math.abs(parseFloat(x0) - top0) < 0.01, `Reise startet in Poreč (Coast.CROP): ${x0} ≙ ${top0 === null ? 'Coast.CROP fehlt' : top0.toFixed(4) + '%'}`);
   await p.waitForTimeout(3600);
   const x1 = await p.evaluate(() => document.querySelector('.valaMarker').style.top);
   ok(x0 !== x1, `Vala reist auf der Karte (${x0} → ${x1})`);

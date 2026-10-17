@@ -232,5 +232,5 @@
     return { done, total: STATIONS.length, next: next || STATIONS.find((s, i) => stationState(i, stationLevel(i)) !== "done") || STATIONS[STATIONS.length - 1] };
   }
 
-  window.Coast = { STATIONS, REGION, render, travel, journey, currentIndex, stationFor: id => STATIONS.find(s => s.id === id), indexOf: id => STATIONS.findIndex(s => s.id === id), MARKS };
+  window.Coast = { STATIONS, CROP, REGION, render, travel, journey, currentIndex, stationFor: id => STATIONS.find(s => s.id === id), indexOf: id => STATIONS.findIndex(s => s.id === id), MARKS };
 })();

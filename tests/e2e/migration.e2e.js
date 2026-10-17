@@ -63,6 +63,8 @@ const today = new Date().toISOString().slice(0, 10);
   ok(a1.text === 'Bestehe die ersten sechs A1-Kapiteltests', 'Ziel-Text: ' + a1.text);
   await g.evaluate(() => show('achievements'));
   ok(await g.evaluate(() => [...document.querySelectorAll('.souvenir.earned h3')].some(h => h.textContent === 'Spitze aus Pag')), 'Souvenir-Ansicht: „Spitze aus Pag“ in Valas Tasche');
+  const lace = await g.evaluate(() => Vala.SOUVENIRS.find(s => s.id === 'a1').text);
+  ok(/Erste A1-Etappe/.test(lace) && !/Ganz A1/.test(lace), 'Souvenir-Text passt zur Regel (erste A1-Etappe): ' + lace);
   await g.screenshot({path: shot('migration-gast-souvenirs.png')});
 
   const before = await progress(g);

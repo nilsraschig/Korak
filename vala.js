@@ -88,7 +88,7 @@
     { id: "words100", art: "postcard", name: "Ansichtskarte", hr: "razglednica", text: "100 Begriffe trainiert – genug für die erste Karte nach Hause." },
     { id: "xp1000", art: "lavender", name: "Lavendel aus Hvar", hr: "lavanda", text: "1.000 Erfahrungspunkte. Duftet nach Sommer." },
     { id: "chapter", art: "botun", name: "Šibenik-Knopf", hr: "šibenski botun", text: "Erster Kapiteltest bestanden. Der silberne Knopf gehört zur Tracht aus Šibenik." },
-    { id: "a1", art: "lace", name: "Spitze aus Pag", hr: "paška čipka", text: "Ganz A1 geschafft – so fein wie die Spitze aus Pag." },
+    { id: "a1", art: "lace", name: "Spitze aus Pag", hr: "paška čipka", text: "Erste A1-Etappe geschafft – so fein wie die Spitze aus Pag." },
     { id: "dialogue", art: "cup", name: "Kaffeetasse", hr: "šalica za kavu", text: "Dein erster Dialog. Idemo na kavu!" },
     { id: "accuracy", art: "lighthouse", name: "Leuchtturm", hr: "svjetionik", text: "90 % Treffsicherheit – du findest den Weg auch im Dunkeln." },
     { id: "stars3", art: "kravata", name: "Krawatte", hr: "kravata", text: "Drei Sterne in einem Test. Die Krawatte stammt übrigens aus Kroatien." }
