@@ -10,7 +10,7 @@ const EXPECTED_IDS = [
   "gender", "plural", "case-gen", "case-dat", "case-acc", "case-ins", "case-loc", "case-voc",
   "adj-agreement", "possessive", "pronouns", "verb-biti", "verb-present", "verb-past",
   "verb-future", "verb-modal", "reflexive", "aspect", "imperative", "conditional", "negation",
-  "questions", "clitic-order", "numbers", "time", "prepositions", "formal-address", "politeness",
+  "questions", "clitic-order", "numbers", "time", "adverbs", "prepositions", "formal-address", "politeness",
   "diacritics-c", "diacritics-sz", "diacritics-dj", "ijekavian"
 ];
 
@@ -41,6 +41,14 @@ test("CONCEPTS: Beispieltext für Akkusativ", () => {
     CONCEPTS["case-acc"].short,
     "Das direkte Objekt steht im Akkusativ: Pijem kavu. Feminine Wörter auf -a enden dann auf -u."
   );
+});
+
+test("CONCEPTS: Adverbien haben keine Endungen (Ruling 18)", () => {
+  assert.equal(CONCEPTS.adverbs.title, "Adverbien");
+  assert.ok(CONCEPTS.adverbs.short.includes("lijevo (links)"));
+  assert.ok(CONCEPTS.adverbs.short.includes("bleiben immer gleich"));
+  const ids = Object.keys(CONCEPTS);
+  assert.equal(ids.indexOf("adverbs"), ids.indexOf("time") + 1, "adverbs steht direkt nach time");
 });
 
 test("CONCEPTS: Futur-Regel gilt nur für -ti, Verben auf -ći behalten das -i", () => {

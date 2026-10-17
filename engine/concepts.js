@@ -109,6 +109,10 @@
       title: "Uhrzeit",
       short: "Du fragst Koliko je sati? und antwortest mit sati: Sada je osam sati. Halb acht heißt pola osam (7:30)."
     },
+    "adverbs": {
+      title: "Adverbien",
+      short: "Wörter wie lijevo (links), desno (rechts), ovdje (hier), tamo (dort), sutra (morgen) oder ujutro (morgens) sind Adverbien: Sie haben keine Fallendungen und bleiben immer gleich."
+    },
     "prepositions": {
       title: "Präpositionen und Fälle",
       short: "Jede Präposition verlangt einen bestimmten Fall; u und na stehen mit Lokativ (wo?) oder Akkusativ (wohin?): Sjedim u kafiću. Idem u kafić."
