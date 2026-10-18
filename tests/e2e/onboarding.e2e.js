@@ -90,7 +90,7 @@ let fails = 0; const ok = (c, m) => { console.log((c ? '  ✔ ' : '  ✘ ') + m)
   await p.waitForTimeout(1500); await p.screenshot({path: out('ob-11-home.png')});
   await p.evaluate(() => { show('levels'); openLevel('A1'); });
   ok(await p.evaluate(() => document.querySelectorAll('.chapter.chapterLocked').length) === 0, 'A1: alle Kapitel offen (überspringbar)');
-  ok(await p.evaluate(() => document.querySelectorAll('.skipHint').length) === 8, 'Hinweis „mit Kapiteltest überspringen“ an 8 A1-Kapiteln');
+  ok(await p.evaluate(() => document.querySelectorAll('.skipHint').length) === 9, 'Hinweis „mit Kapiteltest überspringen“ an 9 A1-Kapiteln');
   ok(await p.evaluate(() => !document.querySelector('#ch-a1-begruessung .stone.test').disabled), 'Kapiteltest von Kapitel 1 sofort wählbar');
   await p.evaluate(() => { show('levels'); openLevel('A2'); });
   ok(await p.evaluate(() => document.querySelector('#coastHost .station.current').dataset.chapter) === 'a2-proslost', 'Vala wartet auf der Karte in Senj');
