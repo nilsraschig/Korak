@@ -98,6 +98,22 @@ const today = new Date().toISOString().slice(0, 10);
   ok(vh.cur === 'Nin' && vh.newOpen, 'Reiseleiste: Nin aktuell, Baška … Novi Vinodolski weiter offen (nicht erledigt)');
   await V.ctx.close();
 
+  console.log('a3) Letzter A1-Kapiteltest bestanden → Weiterlernen in A2 (Ruling 20)');
+  const A1END = {...VET, selectedLevel: 'A1', lastLesson: 'a1-12-5', completed: Array.from({length: 12}, (_, k) => lessonsOf('a1', k + 1)).flat().filter(id => id !== 'a1-12-test')};
+  const W = await device('A1-Ende', {arg: A1END, init: old => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', '1');
+    localStorage.setItem('korak-v6', JSON.stringify(old));
+    localStorage.setItem('korak-mode', 'guest');
+  }});
+  const w0 = await W.p.evaluate(() => nextLesson().id);
+  await W.p.evaluate(() => { startLesson('a1-12-test'); finish(); show('home'); });
+  const wh = await W.p.evaluate(() => ({lv: state.selectedLevel, next: nextLesson().id, meta: document.getElementById('continueMeta').textContent,
+    says: document.getElementById('valaSays').textContent, halt: document.getElementById('journeyNext').textContent, travel: JSON.parse(sessionStorage.getItem('korak-travel') || '{}')}));
+  ok(w0 === 'a1-12-test' && wh.lv === 'A2' && wh.next === 'a2-1-1' && /In Senj/.test(wh.meta), `Nach a1-12-test: Level ${wh.lv}, „Weiterlernen“ ${wh.next} (${wh.meta})`);
+  ok(/Senj/.test(wh.says) && /Senj/.test(wh.halt) && wh.travel.level === 'A2', `Vala, „Nächster Halt“ und Reise nach Senj: „${wh.says}“ / „${wh.halt}“ / Reise ${JSON.stringify(wh.travel)}`);
+  await W.ctx.close();
+
   console.log('b) Angemeldet: Server-Zeile mit alten IDs (a2-16-*)');
   const konoba = ['a2-16-1', 'a2-16-2', 'a2-16-3', 'a2-16-4', 'a2-16-5', 'a2-16-test'];
   const ivana = db.addUser('ivana', {

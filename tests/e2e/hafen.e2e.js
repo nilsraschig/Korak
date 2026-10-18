@@ -4,7 +4,7 @@ let fails = 0; const ok = (c, m) => { console.log((c ? '  ✔ ' : '  ✘ ') + m)
 const today = new Date().toISOString().slice(0, 10);
 (async () => {
   const be = makeBackend(), db = be.db;
-  const tests = ['a1-begruessung','a1-obitelj','a1-hrana','a1-kupovina','a1-putovanje','a1-svakodnevica','a1-kalendar','a1-priroda','a1-more','a2-proslost','a2-buducnost','a2-smjestaj','a2-restoran'].map(c => c + '-test');
+  const tests = ['a1-begruessung','a1-obitelj','a1-hrana','a1-kupovina','a1-putovanje','a1-svakodnevica','a1-kalendar','a1-priroda','a1-more','a1-odjeca','a1-zanimanja','a1-blagdani','a2-proslost'].map(c => c + '-test');
   const ana = db.addUser('ana_22', {completed_lessons: tests, last_study: today, streak: 5, weekly: 420});
   const marko = db.addUser('marko', {weekly: 90});
   for (let i = 1; i <= 6; i++) db.addUser('seglerin' + i, {weekly: 30 * i});
