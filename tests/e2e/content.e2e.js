@@ -57,6 +57,26 @@ async function answerOne(p) {
     return {bad: [...new Set(bad)].slice(0, 6), seen};
   });
   ok(!odd.bad.length && Object.keys(odd.seen).length === 4, '„Was passt nicht?“ ohne gleiche Kategorie: ' + (odd.bad.join(', ') || JSON.stringify(odd.seen)));
+  // Autorenaufgaben (Review Task 10, Finding 10): jedes A1-Kapitel hat ≥ 2, alle wohlgeformt
+  const auth = await p.evaluate(() => {
+    const bad = [], per = {};
+    DATA.levels.find(l => l.id === 'A1').chapters.forEach(c => { per[c.id] = KORAK_EXERCISES.filter(x => x.at === c.id || LESSONS.some(l => l.id === x.at && l.chapterId === c.id)).length; });
+    KORAK_EXERCISES.forEach(x => {
+      const one = opts => opts.filter(o => o[1]).length === 1 && new Set(opts.map(o => o[0])).size === opts.length;
+      if (x.type === 'fix') { const w = x.wrong.split(/\s+/), r = x.right.split(/\s+/), diff = w.filter((t, k) => strip(t) !== strip(r[k])).length;
+        if (w.length !== r.length || diff !== 1 || !x.options.includes(strip(r[w.findIndex((t, k) => strip(t) !== strip(r[k]))])) || new Set(x.options).size !== x.options.length) bad.push(x.id); }
+      else if (x.type === 'scenario' && !one(x.options)) bad.push(x.id);
+      else if (x.type === 'roleplay' && !x.turns.every(t => one(t.options))) bad.push(x.id);
+    });
+    return {few: Object.entries(per).filter(([, n]) => n < 2).map(([c]) => c), bad};
+  });
+  ok(!auth.few.length && !auth.bad.length, 'Autorenaufgaben: jedes A1-Kapitel ≥ 2, alle wohlgeformt' + (auth.few.length ? ' – zu wenige: ' + auth.few.join(', ') : '') + (auth.bad.length ? ' – fehlerhaft: ' + auth.bad.join(', ') : ''));
+  // Jede A1-Autorenaufgabe läuft als Session durch
+  for (const id of await p.evaluate(() => KORAK_EXERCISES.filter(x => /^a1-(kalendar|priroda|more|odjeca|zanimanja|blagdani)$/.test(x.at)).map(x => x.id))) {
+    await p.evaluate(i => { const x = KORAK_EXERCISES.find(e => e.id === i); startSession(authoredItems(x), 'lesson', LESSONS.find(l => l.chapterId === x.at)); }, id);
+    let n = 0; while (await p.evaluate(() => document.getElementById('lesson').classList.contains('active')) && n < 8) { await answerOne(p); n++; }
+    ok(await p.evaluate(() => document.getElementById('done').classList.contains('active') && session.correct > 0), `Autorenaufgabe ${id} richtig beantwortet (${n} Schritte)`);
+  }
   await p.evaluate(() => KorakDictionary.open()); await p.fill('.dict input', 'napojnica'); await p.waitForTimeout(250);
   ok((await p.$eval('.dictRow b', e => e.textContent).catch(() => '')).toLowerCase().includes('napojnic'), 'Wörterbuch kennt neue Wörter (napojnica)');
   console.log('Fehler:', errs.length ? errs : 'keine'); console.log(fails ? fails + ' FEHLGESCHLAGEN' : 'ALLE TESTS BESTANDEN'); await b.close(); process.exit(fails || errs.length ? 1 : 0);
