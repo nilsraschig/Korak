@@ -42,6 +42,21 @@ async function answerOne(p) {
   ok(titles.slice(6).join('|') === 'Meinungen & Diskussion|Beruf & Karriere|Medien & Gesellschaft', 'Danach Ston, Trsteno, Dubrovnik (B1-Kapitel 7–9)');
   await p.evaluate(() => { document.querySelectorAll('#chapters details.culture')[3].open = true; document.querySelectorAll('.chapter')[3].scrollIntoView(); });
   await p.waitForTimeout(900); await p.screenshot({path: shot('chapter-culture.png')});
+  // „Was passt nicht?“: der falsche Ausdruck hat keine Kategorie der drei passenden (Review Task 10, Finding 9)
+  const odd = await p.evaluate(() => {
+    const bad = [], seen = {};
+    ['a1-hrana', 'a1-kupovina', 'a1-svakodnevica', 'a1-more'].forEach(ch => {
+      const its = LESSONS.filter(l => l.chapterId === ch && !l.isTest).flatMap(lessonItems);
+      for (let k = 0; k < 400; k++) {
+        const x = oddEx(its, ch, 'T'); if (!x) continue;
+        const o = x.info[3], cats = x.info.slice(0, 3).map(i => i.category).filter(Boolean);
+        seen[ch] = (seen[ch] || 0) + 1;
+        if (o.category && cats.includes(o.category)) bad.push(`${ch}: ${o.hr} (${o.category})`);
+      }
+    });
+    return {bad: [...new Set(bad)].slice(0, 6), seen};
+  });
+  ok(!odd.bad.length && Object.keys(odd.seen).length === 4, '„Was passt nicht?“ ohne gleiche Kategorie: ' + (odd.bad.join(', ') || JSON.stringify(odd.seen)));
   await p.evaluate(() => KorakDictionary.open()); await p.fill('.dict input', 'napojnica'); await p.waitForTimeout(250);
   ok((await p.$eval('.dictRow b', e => e.textContent).catch(() => '')).toLowerCase().includes('napojnic'), 'Wörterbuch kennt neue Wörter (napojnica)');
   console.log('Fehler:', errs.length ? errs : 'keine'); console.log(fails ? fails + ' FEHLGESCHLAGEN' : 'ALLE TESTS BESTANDEN'); await b.close(); process.exit(fails || errs.length ? 1 : 0);

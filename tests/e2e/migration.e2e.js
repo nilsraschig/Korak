@@ -79,6 +79,25 @@ const today = new Date().toISOString().slice(0, 10);
   ok(sr.c.filter(id => id === 'b1-4-1').length === 1 && sr.c.includes('b1-4-2') && noOld(sr.c), 'Erneut eingespielte alte IDs: b1-4-1 einmal, b1-4-2 neu');
   ok(sr.items['b1-4-1-0'].seen === 3 && sr.items['b1-4-2-5'].seen === 2 && noOld(Object.keys(sr.items)), 'Item-Kollision: höheres seen gewinnt');
 
+  console.log('a2) Bestandsnutzer: altes A1 + A2-Kapitel 1–3 (Ruling 19)');
+  const lessonsOf = (lv, k) => [1, 2, 3, 4, 5].map(i => `${lv}-${k}-${i}`).concat(`${lv}-${k}-test`);
+  const VET = {xp: 2000, streak: 1, bestStreak: 3, lastStudy: today, selectedLevel: 'A2', lastLesson: 'a2-3-test',
+    completed: [1, 2, 3, 4, 5, 6].flatMap(k => lessonsOf('a1', k)).concat([1, 2, 3].flatMap(k => lessonsOf('a2', k))),
+    items: {}, testStars: {}, daily: {date: '', exercises: 0, reviews: 0, dialogues: 0}};
+  const V = await device('Bestand', {arg: VET, init: old => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', '1');
+    localStorage.setItem('korak-v6', JSON.stringify(old));
+    localStorage.setItem('korak-mode', 'guest');
+  }});
+  const vh = await V.p.evaluate(() => ({next: nextLesson().id, says: document.getElementById('valaSays').textContent, halt: document.getElementById('journeyNext').textContent,
+    meta: document.getElementById('continueMeta').textContent, cur: [...document.querySelectorAll('#journeyTrack .jStop.current')].map(e => e.title).join(),
+    newOpen: ['Baška', 'Cres', 'Lošinj'].every(n => !document.querySelector(`#journeyTrack .jStop[title="${n}"]`).classList.contains('done'))}));
+  ok(vh.next === 'a2-4-1' && /In Nin/.test(vh.meta), '„Weiterlernen“ bleibt in A2 (Nin): ' + vh.next);
+  ok(/Nin/.test(vh.halt) && !/Baška/.test(vh.says + vh.halt), `Vala und „Nächster Halt“ folgen „Weiterlernen“: „${vh.says}“ / „${vh.halt}“`);
+  ok(vh.cur === 'Nin' && vh.newOpen, 'Reiseleiste: Nin aktuell, Baška/Cres/Lošinj weiter offen (nicht erledigt)');
+  await V.ctx.close();
+
   console.log('b) Angemeldet: Server-Zeile mit alten IDs (a2-16-*)');
   const konoba = ['a2-16-1', 'a2-16-2', 'a2-16-3', 'a2-16-4', 'a2-16-5', 'a2-16-test'];
   const ivana = db.addUser('ivana', {
