@@ -14,7 +14,7 @@ let fails = 0; const ok = (c, m) => { console.log((c ? '  ✔ ' : '  ✘ ') + m)
   ok(await p.isVisible('.topbar'), 'Kopfzeile sichtbar');
   ok(await p.evaluate(() => !!document.querySelector('#homeVala svg.vala.idle')), 'Start: Vala im Ruhezustand');
   ok((await p.textContent('#valaSays')).length > 10, 'Start: Sprechblase gefüllt: ' + await p.textContent('#valaSays'));
-  ok(await p.evaluate(() => document.querySelectorAll('#journeyTrack .jStop').length) === 30, 'Reiseleiste: 30 Orte');
+  ok(await p.evaluate(() => document.querySelectorAll('#journeyTrack .jStop').length) === 33, 'Reiseleiste: 33 Orte');
   ok(await p.evaluate(() => document.querySelectorAll('#journeyTrack .jStop.current').length) === 1, 'Reiseleiste: genau ein aktueller Ort');
   ok(/0 von 10 Souvenirs/.test(await p.textContent('#bagCount')), 'Tasche leer zu Beginn');
   // Klang-Schalter
@@ -27,7 +27,19 @@ let fails = 0; const ok = (c, m) => { console.log((c ? '  ✔ ' : '  ✘ ') + m)
   ok(await p.evaluate(() => localStorage.getItem('korak-sound')) === 'off', 'Klänge ausschalten wird gespeichert');
   // Karte
   await p.evaluate(() => { show('levels'); openLevel('A1') });
-  ok(await p.evaluate(() => document.querySelectorAll('#coastHost .station').length) === 9, 'A1-Karte: 9 Orte');
+  ok(await p.evaluate(() => document.querySelectorAll('#coastHost .station').length) === 12, 'A1-Karte: 12 Orte');
+  // Route je Karte nur vom letzten Ort des Vorlevels bis zum ersten Ort des Folgelevels (Review Task 10, Finding 7)
+  for (const lv of ['A1', 'A2', 'B1']) {
+    await p.evaluate(l => { show('levels'); openLevel(l) }, lv);
+    const r = await p.evaluate(lv => {
+      const path = document.querySelector('#coastHost .route'), len = path.getTotalLength(), a = path.getPointAtLength(0), z = path.getPointAtLength(len);
+      const S = Coast.STATIONS, idx = S.map((s, i) => i).filter(i => S[i].id.slice(0, 2).toUpperCase() === lv), first = idx[0], last = idx[idx.length - 1];
+      const from = S[Math.max(0, first - 1)], to = S[Math.min(S.length - 1, last + 1)], near = (pt, s) => Math.hypot(pt.x - s.x, pt.y - s.y) < 1;
+      return { ok: near(a, from) && near(z, to), txt: `${from.name} → ${to.name}: ${a.x.toFixed(0)},${a.y.toFixed(0)} … ${z.x.toFixed(0)},${z.y.toFixed(0)}` };
+    }, lv);
+    ok(r.ok, `${lv}-Karte: Route nur ${r.txt}`);
+  }
+  await p.evaluate(() => { show('levels'); openLevel('A1') });
   ok(await p.evaluate(() => document.querySelector('#coastHost .station.current') && document.querySelector('#coastHost .station.current').dataset.chapter === DATA.levels[0].chapters[0].id), 'Aktueller Ort = erstes Kapitel');
   await p.evaluate(() => document.querySelectorAll('#coastHost .station')[1].dispatchEvent(new MouseEvent('click', { bubbles: true })));
   await p.waitForTimeout(300);

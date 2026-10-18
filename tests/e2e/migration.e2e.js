@@ -44,7 +44,7 @@ const today = new Date().toISOString().slice(0, 10);
   ok(A1_TESTS.every(id => sa.completed.includes(id)) && sa.completed.includes('b1-1-1'), 'Übrige IDs unverändert (a1-*-test, b1-1-1)');
   ok(sa.seen === 3 && noOld(sa.items), 'Wiederholungsplan umbenannt: b1-4-1-0 (seen 3)');
   ok(sa.lastLesson === 'b1-4-1', 'lastLesson umbenannt: ' + sa.lastLesson);
-  ok(/6 von 30 Orten/.test(await g.textContent('#journeyLabel')), 'Startseite: ' + await g.textContent('#journeyLabel'));
+  ok(/6 von 33 Orten/.test(await g.textContent('#journeyLabel')), 'Startseite: ' + await g.textContent('#journeyLabel'));
   // vor openLevel prüfen – das setzt selectedLevel selbst und würde einen Fehler verdecken
   const cont = await g.evaluate(() => ({lv: state.selectedLevel, next: nextLesson().id, meta: document.getElementById('continueMeta').textContent}));
   ok(cont.lv === 'B1' && cont.next === 'b1-4-2' && /In Bol/.test(cont.meta), `„Weiterlernen“ führt ins umgezogene Kapitel: selectedLevel ${cont.lv}, ${cont.next} – ${cont.meta}`);
@@ -92,10 +92,10 @@ const today = new Date().toISOString().slice(0, 10);
   }});
   const vh = await V.p.evaluate(() => ({next: nextLesson().id, says: document.getElementById('valaSays').textContent, halt: document.getElementById('journeyNext').textContent,
     meta: document.getElementById('continueMeta').textContent, cur: [...document.querySelectorAll('#journeyTrack .jStop.current')].map(e => e.title).join(),
-    newOpen: ['Baška', 'Cres', 'Lošinj'].every(n => !document.querySelector(`#journeyTrack .jStop[title="${n}"]`).classList.contains('done'))}));
+    newOpen: ['Baška', 'Cres', 'Lošinj', 'Susak', 'Crikvenica', 'Novi Vinodolski'].every(n => !document.querySelector(`#journeyTrack .jStop[title="${n}"]`).classList.contains('done'))}));
   ok(vh.next === 'a2-4-1' && /In Nin/.test(vh.meta), '„Weiterlernen“ bleibt in A2 (Nin): ' + vh.next);
   ok(/Nin/.test(vh.halt) && !/Baška/.test(vh.says + vh.halt), `Vala und „Nächster Halt“ folgen „Weiterlernen“: „${vh.says}“ / „${vh.halt}“`);
-  ok(vh.cur === 'Nin' && vh.newOpen, 'Reiseleiste: Nin aktuell, Baška/Cres/Lošinj weiter offen (nicht erledigt)');
+  ok(vh.cur === 'Nin' && vh.newOpen, 'Reiseleiste: Nin aktuell, Baška … Novi Vinodolski weiter offen (nicht erledigt)');
   await V.ctx.close();
 
   console.log('b) Angemeldet: Server-Zeile mit alten IDs (a2-16-*)');
@@ -115,7 +115,7 @@ const today = new Date().toISOString().slice(0, 10);
   ok(su.lv === 'B1' && /In Bol/.test(su.meta), `selected_level „A2“ zieht mit nach B1, „Weiterlernen“: ${su.meta}`);
   ok(su.completed.includes('b1-7-test') && konoba.every(id => su.completed.includes(id.replace('a2-16', 'b1-7'))) && noOld(su.completed), 'Zustand nach dem Login: b1-7-1 … b1-7-test');
   ok(su.items.includes('b1-7-2-0') && su.items.includes('dialog-b1-7-1') && noOld(su.items) && su.stars['b1-7-test'] === 3 && su.lastLesson === 'b1-7-test' && su.xp === 640, 'Items, Sterne, letzte Lektion umbenannt, XP gleich');
-  ok(/1 von 30 Orten/.test(await u.textContent('#journeyLabel')), 'Startseite zeigt den Fortschritt: ' + await u.textContent('#journeyLabel'));
+  ok(/1 von 33 Orten/.test(await u.textContent('#journeyLabel')), 'Startseite zeigt den Fortschritt: ' + await u.textContent('#journeyLabel'));
   ok(await u.evaluate(() => [...document.querySelectorAll('#journeyTrack .jStop.done')].map(e => e.title).join()) === 'Korčula', 'Reiseleiste markiert den erledigten Ort (Korčula), auch wenn Vala anderswo steht');
   ok(await u.evaluate(() => souvenirs().find(s => s.id === 'chapter').ok && souvenirs().find(s => s.id === 'stars3').ok), 'Souvenirs „Kapitel geschafft“ und „Drei Sterne“ verdient');
   await u.screenshot({path: shot('migration-konto-home.png')});

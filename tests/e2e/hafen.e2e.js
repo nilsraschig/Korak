@@ -4,7 +4,7 @@ let fails = 0; const ok = (c, m) => { console.log((c ? '  ✔ ' : '  ✘ ') + m)
 const today = new Date().toISOString().slice(0, 10);
 (async () => {
   const be = makeBackend(), db = be.db;
-  const tests = ['a1-begruessung','a1-obitelj','a1-hrana','a1-kupovina','a1-putovanje','a1-svakodnevica','a2-proslost','a2-buducnost','a2-smjestaj','a2-restoran'].map(c => c + '-test');
+  const tests = ['a1-begruessung','a1-obitelj','a1-hrana','a1-kupovina','a1-putovanje','a1-svakodnevica','a1-kalendar','a1-priroda','a1-more','a2-proslost','a2-buducnost','a2-smjestaj','a2-restoran'].map(c => c + '-test');
   const ana = db.addUser('ana_22', {completed_lessons: tests, last_study: today, streak: 5, weekly: 420});
   const marko = db.addUser('marko', {weekly: 90});
   for (let i = 1; i <= 6; i++) db.addUser('seglerin' + i, {weekly: 30 * i});
@@ -62,7 +62,7 @@ const today = new Date().toISOString().slice(0, 10);
   db.friendships.find(f => f.requester === nils.id).status = 'accepted';
   await p.click('.dock [data-screen=hafen]'); await p.waitForSelector('.mate[data-name=ana_22]');
   const anaTxt = await p.textContent('.mate[data-name=ana_22]');
-  ok(/gerade in Rab/.test(anaTxt), 'Ort aus Kapitelzahl (10 Tests → 11. Station Rab): ' + anaTxt.replace(/\s+/g, ' ').trim());
+  ok(/gerade in Rab/.test(anaTxt), 'Ort aus Kapitelzahl (13 Tests → 14. Station Rab): ' + anaTxt.replace(/\s+/g, ' ').trim());
   ok(/5/.test(anaTxt) && /420/.test(anaTxt), 'Serie 5 und 420 Wochen-XP sichtbar');
 
   console.log('5) XP sammeln → Regatta');

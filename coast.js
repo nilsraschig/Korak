@@ -7,17 +7,21 @@
   const INK = "#243328";
 
   // Kapitel → Ort (Reihenfolge = Reiseroute von Nord nach Süd): [Kapitel, Ort, x, y, Wahrzeichen, Seite des Wahrzeichens,
-  // Seite des Ortsnamens (optional, sonst wie das Wahrzeichen)]
+  // Ortsname (optional): "l"/"r" = Seite (sonst wie das Wahrzeichen) oder {at: [dx, dy], wrap} = Grundlinie relativ zum Pin,
+  // linksbündig; wrap bricht den Namen am Leerzeichen in zwei Zeilen um (lange Namen an der schmalen Küste)]
   const STATIONS = [
     ["a1-begruessung", "Poreč", 84, 140, "tower", "r"],
     ["a1-obitelj", "Rovinj", 86, 212, "campanile", "r"],
     ["a1-hrana", "Pula", 132, 358, "arena", "r"],
     ["a1-kupovina", "Opatija", 244, 238, "palm", "l"],
-    ["a1-putovanje", "Rijeka", 292, 226, "clock", "r"],
-    ["a1-svakodnevica", "Krk", 282, 304, "tablet", "l"],
-    ["a1-kalendar", "Baška", 306, 312, "beach", "r"],
-    ["a1-priroda", "Cres", 198, 418, "bird", "l", "r"],
-    ["a1-more", "Lošinj", 188, 516, "dolphin", "l"],
+    ["a1-putovanje", "Rijeka", 276, 224, "clock", "r", { at: [-44, -14] }],
+    ["a1-svakodnevica", "Krk", 236, 302, "tablet", "r", "l"],
+    ["a1-kalendar", "Baška", 278, 324, "beach", "r", { at: [-4, 34] }],
+    ["a1-priroda", "Cres", 204, 440, "bird", "l", "l"],
+    ["a1-more", "Lošinj", 192, 506, "dolphin", "r"],
+    ["a1-odjeca", "Susak", 156, 560, "costume", "l", "r"],
+    ["a1-zanimanja", "Crikvenica", 306, 282, "palm", "r", { at: [6, -44] }],
+    ["a1-blagdani", "Novi Vinodolski", 336, 344, "fort", "r", { at: [-26, 36], wrap: true }],
     ["a2-proslost", "Senj", 338, 352, "fort", "r"],
     ["a2-buducnost", "Rab", 300, 420, "towers", "l", "r"],
     ["a2-smjestaj", "Pag", 268, 560, "lace", "l"],
@@ -39,7 +43,10 @@
     ["b1-misljenje", "Ston", 338, 1832, "walls", "r"],
     ["b1-karijera", "Trsteno", 354, 1944, "tree", "r"],
     ["b1-drustvo", "Dubrovnik", 364, 2000, "citywalls", "l"]
-  ].map(([id, name, x, y, mark, side, labelSide], i) => ({ id, name, x, y, mark, side, labelSide: labelSide || side, n: i + 1 }));
+  ].map(([id, name, x, y, mark, side, label], i) => {
+    const o = typeof label === "string" ? { side: label } : (label || {});
+    return { id, name, x, y, mark, side, labelSide: o.side || side, labelAt: o.at || null, wrap: !!o.wrap, n: i + 1 };
+  });
 
   const CROP = { A1: [0, 590], A2: [300, 1400], B1: [1250, 2090] };
   const REGION = { A1: "Istrien & Kvarner", A2: "Dalmatien", B1: "Süddalmatien" };
@@ -47,18 +54,26 @@
   const SEA_Y = { A1: 520 };
 
   // Festlandküste (Land liegt rechts/östlich)
-  const COAST = [[262, -20], [240, 22], [190, 34], [132, 42], [96, 62], [82, 98], [84, 140], [78, 178], [86, 212], [92, 250], [104, 290], [118, 330], [132, 360], [150, 388], [170, 384], [182, 360], [196, 330], [206, 296], [222, 262], [244, 238], [270, 224], [292, 226], [312, 244], [330, 290], [338, 350], [340, 410], [338, 470], [334, 540], [330, 610], [320, 680], [304, 720], [290, 760], [282, 800], [288, 850], [298, 900], [304, 950], [306, 1000], [310, 1050], [316, 1100], [318, 1134], [334, 1190], [346, 1230], [350, 1262], [356, 1310], [360, 1360], [362, 1420], [362, 1480], [360, 1540], [352, 1590], [346, 1640], [348, 1700], [352, 1780], [340, 1832], [350, 1900], [354, 1944], [364, 2000], [372, 2050], [382, 2120]];
-  const ISLANDS = [[208, 380, 12, 92, 6], [196, 500, 9, 38, 12], [282, 300, 34, 24, -10], [300, 420, 16, 20, -20], [268, 560, 11, 92, -28], [200, 860, 9, 80, -30], [250, 850, 8, 60, -30], [215, 930, 6, 20, -30], [230, 962, 5, 14, -30], [268, 1280, 58, 18, -6], [220, 1224, 26, 9, -8], [238, 1350, 80, 12, -7], [108, 1402, 22, 14, -8], [236, 1515, 74, 12, -8], [300, 1690, 16, 148, -16], [250, 1760, 58, 9, -18], [130, 1640, 20, 8, -5], [352, 2022, 6, 4, 0]];
+  const COAST = [[262, -20], [240, 22], [190, 34], [132, 42], [96, 62], [82, 98], [84, 140], [78, 178], [86, 212], [92, 250], [104, 290], [118, 330], [132, 360], [150, 388], [170, 384], [182, 360], [196, 330], [206, 296], [222, 262], [244, 238], [270, 224], [292, 226], [298, 250], [308, 292], [326, 330], [338, 350], [340, 410], [338, 470], [334, 540], [330, 610], [320, 680], [304, 720], [290, 760], [282, 800], [288, 850], [298, 900], [304, 950], [306, 1000], [310, 1050], [316, 1100], [318, 1134], [334, 1190], [346, 1230], [350, 1262], [356, 1310], [360, 1360], [362, 1420], [362, 1480], [360, 1540], [352, 1590], [346, 1640], [348, 1700], [352, 1780], [340, 1832], [350, 1900], [354, 1944], [364, 2000], [372, 2050], [382, 2120]];
+  const ISLANDS = [[208, 380, 12, 92, 6], [196, 500, 9, 38, 12], [156, 562, 6, 9, -20], [260, 312, 32, 19, 22], [300, 420, 16, 20, -20], [268, 560, 11, 92, -28], [200, 860, 9, 80, -30], [250, 850, 8, 60, -30], [215, 930, 6, 20, -30], [230, 962, 5, 14, -30], [268, 1280, 58, 18, -6], [220, 1224, 26, 9, -8], [238, 1350, 80, 12, -7], [108, 1402, 22, 14, -8], [236, 1515, 74, 12, -8], [300, 1690, 16, 148, -16], [250, 1760, 58, 9, -18], [130, 1640, 20, 8, -5], [352, 2022, 6, 4, 0]];
 
   // ---------- Geometrie ----------
-  function catmull(pts, closed = false) {
-    const p = closed ? [pts[pts.length - 1], ...pts, pts[0], pts[1]] : [pts[0], ...pts, pts[pts.length - 1]];
-    let d = `M${p[1][0]} ${p[1][1]}`;
+  // Kurvenstücke von Punkt i nach i+1 (Catmull-Rom als kubische Bézier-Kurven)
+  // clamp: Kontrollpunkte höchstens ein Drittel des Stücks vom Punkt entfernt – verhindert Schleifen,
+  // wenn ein langes und ein kurzes Stück aufeinandertreffen (nur für die Route)
+  function catmullSegs(pts, closed = false, clamp = false) {
+    const p = closed ? [pts[pts.length - 1], ...pts, pts[0], pts[1]] : [pts[0], ...pts, pts[pts.length - 1]], segs = [];
+    const lim = (dx, dy, max) => { const l = Math.hypot(dx, dy); return clamp && l > max ? [dx * max / l, dy * max / l] : [dx, dy]; };
     for (let i = 1; i < p.length - 2; i++) {
-      const [x0, y0] = p[i - 1], [x1, y1] = p[i], [x2, y2] = p[i + 1], [x3, y3] = p[i + 2];
-      d += ` C${(x1 + (x2 - x0) / 6).toFixed(1)} ${(y1 + (y2 - y0) / 6).toFixed(1)} ${(x2 - (x3 - x1) / 6).toFixed(1)} ${(y2 - (y3 - y1) / 6).toFixed(1)} ${x2} ${y2}`;
+      const [x0, y0] = p[i - 1], [x1, y1] = p[i], [x2, y2] = p[i + 1], [x3, y3] = p[i + 2], d = Math.hypot(x2 - x1, y2 - y1) / 3;
+      const [ax, ay] = lim((x2 - x0) / 6, (y2 - y0) / 6, d), [bx, by] = lim((x3 - x1) / 6, (y3 - y1) / 6, d);
+      segs.push(` C${(x1 + ax).toFixed(1)} ${(y1 + ay).toFixed(1)} ${(x2 - bx).toFixed(1)} ${(y2 - by).toFixed(1)} ${x2} ${y2}`);
     }
-    return d;
+    return { start: p[1], segs };
+  }
+  function catmull(pts, closed = false) {
+    const { start, segs } = catmullSegs(pts, closed);
+    return `M${start[0]} ${start[1]}` + segs.join("");
   }
   // Leicht unregelmäßige Insel – deterministisch, damit sie bei jedem Rendern gleich aussieht
   function islandPath([cx, cy, rx, ry, rot], seed) {
@@ -100,11 +115,20 @@
     walls: `<path fill="#b9a98a" d="M-15 0 L-8 -12 L0 -18 L8 -10 L15 0Z"/><path fill="none" stroke-width="2" stroke="${W}" d="M-13 -2 L-8 -11 L-4 -8 L0 -17 L4 -12 L8 -9 L13 -2"/><path fill="none" stroke-width="1" d="M-13 -2 L-8 -11 L-4 -8 L0 -17 L4 -12 L8 -9 L13 -2"/>`,
     tree: `<path fill="none" stroke="#8a4a2b" stroke-width="2.4" d="M0 0 V-11"/><path fill="${O}" d="M0 -30 C9 -30 14 -22 11 -15 C9 -10 3 -10 0 -11 C-3 -10 -9 -10 -11 -15 C-14 -22 -9 -30 0 -30Z"/>`,
     bird: `<path fill="#b9a98a" d="M-13 0 L-10 -7 L-5 -10 L0 -8 L5 -12 L10 -9 L13 0Z"/><path fill="#8a4a2b" d="M0 -21 C-4 -24.5 -9 -25 -14 -23 L-12.4 -21.2 L-14.4 -20 L-10 -19.2 C-6 -18.6 -3 -18.2 0 -17 C3 -18.2 6 -18.6 10 -19.2 L14.4 -20 L12.4 -21.2 L14 -23 C9 -25 4 -24.5 0 -21Z"/><path fill="#8a4a2b" d="M-1.8 -17.6 L-1.2 -14.8 H1.2 L1.8 -17.6Z"/><circle cx="0" cy="-21.6" r="2" fill="#fbf8f1"/>`,
+    costume: `<circle cx="0" cy="-27.4" r="3.2" fill="${W}"/><path fill="${W}" d="M-3.4 -23.6 H3.4 L4.4 -16 H-4.4Z"/><path fill="${Y}" d="M-13 -9 C-7 -6.2 7 -6.2 13 -9 L12.4 -6.2 C6 -3.6 -6 -3.6 -12.4 -6.2Z"/><path fill="${T}" d="M-4.4 -16 H4.4 L13 -9 C7 -6.2 -7 -6.2 -13 -9Z"/><path fill="${O}" d="M-2.4 -15.6 H2.4 L3.4 -8 C1.2 -7.4 -1.2 -7.4 -3.4 -8Z"/><path fill="none" stroke-width="1" d="M-7.4 -13.4 L-9.6 -7.6 M7.4 -13.4 L9.6 -7.6"/><path fill="none" d="M-2.6 -4.6 V0 M2.6 -4.6 V0"/>`,
     dolphin: `<path fill="#a7a58d" d="M-11 -5 C-8 -17 4 -23 11 -14 L14.5 -12.2 L11 -11.6 C6 -15 -3 -14 -8 -3Z"/><path fill="#a7a58d" d="M0 -19.4 L2.4 -23.6 L4.6 -18.2Z M-9.6 -4.4 L-14.6 -6.2 L-12.4 -2.6 L-13.2 0.6Z"/><circle cx="7.4" cy="-15.2" r=".9" fill="${INK}" stroke="none"/><path fill="none" stroke="${S}" d="M-15 3 C-10 1 -6 5 -1 3 C4 1 8 5 13 3"/>`,
     citywalls: `<path fill="${W}" d="M-16 0 V-10 H-9 V-13 H-6 V-10 H6 V-13 H9 V-10 H16 V0Z"/><path fill="${W}" d="M-3 -10 V-22 C-3 -25 5 -25 5 -22 V-10Z"/><path fill="none" d="M-3 -22 H5 M-3 -19 V-22 M1 -19 V-22 M5 -19 V-22"/><path fill="none" d="M1 -25 V-31"/><path fill="${T}" d="M1 -31 L7 -29 L1 -27Z"/>`
   };
 
-  const ROUTE_PATH = catmull(STATIONS.map(s => [s.x, s.y]));
+  const ROUTE_SEGS = catmullSegs(STATIONS.map(s => [s.x, s.y]), false, true).segs, ROUTE_PATH = `M${STATIONS[0].x} ${STATIONS[0].y}` + ROUTE_SEGS.join("");
+  // Gestrichelte Route einer Karte: vom letzten Ort des Vorlevels bis zum ersten Ort des Folgelevels – dieselbe Kurve,
+  // aber ohne die Strecken zwischen Orten fremder Level (sonst Knicke und Zickzack ohne Pin)
+  function routePathFor(level) {
+    const idx = STATIONS.map((s, i) => i).filter(i => stationLevel(i) === level);
+    if (!idx.length) return ROUTE_PATH;
+    const a = Math.max(0, idx[0] - 1), b = Math.min(STATIONS.length - 1, idx[idx.length - 1] + 1);
+    return `M${STATIONS[a].x} ${STATIONS[a].y}` + ROUTE_SEGS.slice(a, b).join("");
+  }
 
   function stationState(i, level) {
     const lev = DATA.levels.find(l => l.id === level);
@@ -141,12 +165,14 @@
     }
     const stations = STATIONS.map((s, i) => {
       if (stationLevel(i) !== level) return "";
-      const st = stationState(i, level), labelX = s.labelSide === "l" ? -14 : 14, anchor = s.labelSide === "l" ? "end" : "start";
+      const st = stationState(i, level), labelX = s.labelAt ? s.labelAt[0] : s.labelSide === "l" ? -14 : 14, labelY = s.labelAt ? s.labelAt[1] : 22;
+      const anchor = s.labelAt ? "start" : s.labelSide === "l" ? "end" : "start";
+      const name = s.wrap ? s.name.split(" ").map((w, k) => `<tspan x="${labelX}"${k ? ` dy="16"` : ""}>${w}</tspan>`).join("") : s.name;
       const markX = s.side === "l" ? -30 : 30;
       return `<g class="station ${st}${i === cur ? " current" : ""}" data-chapter="${s.id}" transform="translate(${s.x} ${s.y})" tabindex="0" role="button" aria-label="${s.name}: ${st === "done" ? "abgeschlossen" : st === "locked" ? "noch gesperrt" : "offen"}">
         <g class="landmark" transform="translate(${markX} -6)" filter="url(#ink)" stroke="${INK}" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round">${MARKS[s.mark] || MARKS.tower}</g>
         <circle class="pin" r="9"/>${st === "done" ? `<path class="pinCheck" d="M-4 0 l3 3 5 -6"/>` : `<text class="pinNo" y="4">${s.n}</text>`}
-        <text class="placeName" x="${labelX}" y="${s.side === "l" ? 22 : 22}" text-anchor="${anchor}">${s.name}</text>
+        <text class="placeName" x="${labelX}" y="${labelY}" text-anchor="${anchor}">${name}</text>
       </g>`;
     }).join("");
     host.innerHTML = `<div class="coastMap" style="--ratio:${(h / 400).toFixed(4)}">
@@ -156,7 +182,7 @@
         <path class="land" d="${landPath}" filter="url(#paint)"/>
         <path class="coastline" d="${catmull(land)}" filter="url(#ink)"/>
         ${ISLANDS.map((isl, i) => `<path class="land island" d="${islandPath(isl, i + 1)}" filter="url(#paint)"/><path class="coastline" d="${islandPath(isl, i + 1)}" filter="url(#ink)"/>`).join("")}
-        <path class="route" d="${ROUTE_PATH}"/>
+        <path class="route" d="${routePathFor(level)}"/>
         <path class="routeDone" d="${ROUTE_PATH}" style="${routeDoneStyle(cur, level)}"/>
         <text class="seaName" x="40" y="${seaY}" transform="rotate(-72 40 ${seaY})">Jadransko more</text>
         ${stations}
