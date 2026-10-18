@@ -14,7 +14,7 @@ let fails = 0; const ok = (c, m) => { console.log((c ? '  ✔ ' : '  ✘ ') + m)
   ok(await p.isVisible('.topbar'), 'Kopfzeile sichtbar');
   ok(await p.evaluate(() => !!document.querySelector('#homeVala svg.vala.idle')), 'Start: Vala im Ruhezustand');
   ok((await p.textContent('#valaSays')).length > 10, 'Start: Sprechblase gefüllt: ' + await p.textContent('#valaSays'));
-  ok(await p.evaluate(() => document.querySelectorAll('#journeyTrack .jStop').length) === 27, 'Reiseleiste: 27 Orte');
+  ok(await p.evaluate(() => document.querySelectorAll('#journeyTrack .jStop').length) === 30, 'Reiseleiste: 30 Orte');
   ok(await p.evaluate(() => document.querySelectorAll('#journeyTrack .jStop.current').length) === 1, 'Reiseleiste: genau ein aktueller Ort');
   ok(/0 von 10 Souvenirs/.test(await p.textContent('#bagCount')), 'Tasche leer zu Beginn');
   // Klang-Schalter
@@ -27,7 +27,7 @@ let fails = 0; const ok = (c, m) => { console.log((c ? '  ✔ ' : '  ✘ ') + m)
   ok(await p.evaluate(() => localStorage.getItem('korak-sound')) === 'off', 'Klänge ausschalten wird gespeichert');
   // Karte
   await p.evaluate(() => { show('levels'); openLevel('A1') });
-  ok(await p.evaluate(() => document.querySelectorAll('#coastHost .station').length) === 6, 'A1-Karte: 6 Orte');
+  ok(await p.evaluate(() => document.querySelectorAll('#coastHost .station').length) === 9, 'A1-Karte: 9 Orte');
   ok(await p.evaluate(() => document.querySelector('#coastHost .station.current') && document.querySelector('#coastHost .station.current').dataset.chapter === DATA.levels[0].chapters[0].id), 'Aktueller Ort = erstes Kapitel');
   await p.evaluate(() => document.querySelectorAll('#coastHost .station')[1].dispatchEvent(new MouseEvent('click', { bubbles: true })));
   await p.waitForTimeout(300);

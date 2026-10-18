@@ -62,7 +62,7 @@ const today = new Date().toISOString().slice(0, 10);
   db.friendships.find(f => f.requester === nils.id).status = 'accepted';
   await p.click('.dock [data-screen=hafen]'); await p.waitForSelector('.mate[data-name=ana_22]');
   const anaTxt = await p.textContent('.mate[data-name=ana_22]');
-  ok(/gerade in Zadar/.test(anaTxt), 'Ort aus Kapitelzahl (10 Tests → 11. Station Zadar): ' + anaTxt.replace(/\s+/g, ' ').trim());
+  ok(/gerade in Rab/.test(anaTxt), 'Ort aus Kapitelzahl (10 Tests → 11. Station Rab): ' + anaTxt.replace(/\s+/g, ' ').trim());
   ok(/5/.test(anaTxt) && /420/.test(anaTxt), 'Serie 5 und 420 Wochen-XP sichtbar');
 
   console.log('5) XP sammeln → Regatta');
@@ -93,7 +93,7 @@ const today = new Date().toISOString().slice(0, 10);
   const top0 = await p.evaluate(() => document.querySelector('.valaMarker').style.top);
   await p.evaluate(() => document.querySelector('.friendFlag[data-name=ana_22]').dispatchEvent(new MouseEvent('click', {bubbles: true})));
   await p.waitForSelector('.visitSays', {timeout: 6000});
-  ok(/ana_22|Zadar/.test(await p.textContent('.visitSays')), 'Vala grüßt: ' + await p.textContent('.visitSays'));
+  ok(/ana_22|Rab/.test(await p.textContent('.visitSays')), 'Vala grüßt: ' + await p.textContent('.visitSays'));
   ok(await p.evaluate(t => document.querySelector('.valaMarker').style.top !== t, top0), 'Vala ist zu ana gereist');
   await p.waitForFunction(() => !document.querySelector('.coastMap').dataset.visiting, null, {timeout: 9000});
   ok(await p.evaluate(t => document.querySelector('.valaMarker').style.top === t, top0), 'und wieder zurück');

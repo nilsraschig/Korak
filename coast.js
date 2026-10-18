@@ -6,7 +6,8 @@
 (function () {
   const INK = "#243328";
 
-  // Kapitel → Ort (Reihenfolge = Reiseroute von Nord nach Süd)
+  // Kapitel → Ort (Reihenfolge = Reiseroute von Nord nach Süd): [Kapitel, Ort, x, y, Wahrzeichen, Seite des Wahrzeichens,
+  // Seite des Ortsnamens (optional, sonst wie das Wahrzeichen)]
   const STATIONS = [
     ["a1-begruessung", "Poreč", 84, 140, "tower", "r"],
     ["a1-obitelj", "Rovinj", 86, 212, "campanile", "r"],
@@ -14,8 +15,11 @@
     ["a1-kupovina", "Opatija", 244, 238, "palm", "l"],
     ["a1-putovanje", "Rijeka", 292, 226, "clock", "r"],
     ["a1-svakodnevica", "Krk", 282, 304, "tablet", "l"],
+    ["a1-kalendar", "Baška", 306, 312, "beach", "r"],
+    ["a1-priroda", "Cres", 198, 418, "bird", "l", "r"],
+    ["a1-more", "Lošinj", 188, 516, "dolphin", "l"],
     ["a2-proslost", "Senj", 338, 352, "fort", "r"],
-    ["a2-buducnost", "Rab", 300, 420, "towers", "l"],
+    ["a2-buducnost", "Rab", 300, 420, "towers", "l", "r"],
     ["a2-smjestaj", "Pag", 268, 560, "lace", "l"],
     ["a2-restoran", "Nin", 304, 720, "chapel", "r"],
     ["a2-svakodnevica", "Zadar", 282, 800, "sun", "r"],
@@ -35,10 +39,12 @@
     ["b1-misljenje", "Ston", 338, 1832, "walls", "r"],
     ["b1-karijera", "Trsteno", 354, 1944, "tree", "r"],
     ["b1-drustvo", "Dubrovnik", 364, 2000, "citywalls", "l"]
-  ].map(([id, name, x, y, mark, side], i) => ({ id, name, x, y, mark, side, n: i + 1 }));
+  ].map(([id, name, x, y, mark, side, labelSide], i) => ({ id, name, x, y, mark, side, labelSide: labelSide || side, n: i + 1 }));
 
-  const CROP = { A1: [0, 440], A2: [300, 1400], B1: [1250, 2090] };
+  const CROP = { A1: [0, 590], A2: [300, 1400], B1: [1250, 2090] };
   const REGION = { A1: "Istrien & Kvarner", A2: "Dalmatien", B1: "Süddalmatien" };
+  // Fußpunkt des Meeresnamens; ohne Eintrag bei 55 % der Ausschnitthöhe. A1 reicht bis Lošinj – dort liegt er im offenen Meer.
+  const SEA_Y = { A1: 520 };
 
   // Festlandküste (Land liegt rechts/östlich)
   const COAST = [[262, -20], [240, 22], [190, 34], [132, 42], [96, 62], [82, 98], [84, 140], [78, 178], [86, 212], [92, 250], [104, 290], [118, 330], [132, 360], [150, 388], [170, 384], [182, 360], [196, 330], [206, 296], [222, 262], [244, 238], [270, 224], [292, 226], [312, 244], [330, 290], [338, 350], [340, 410], [338, 470], [334, 540], [330, 610], [320, 680], [304, 720], [290, 760], [282, 800], [288, 850], [298, 900], [304, 950], [306, 1000], [310, 1050], [316, 1100], [318, 1134], [334, 1190], [346, 1230], [350, 1262], [356, 1310], [360, 1360], [362, 1420], [362, 1480], [360, 1540], [352, 1590], [346, 1640], [348, 1700], [352, 1780], [340, 1832], [350, 1900], [354, 1944], [364, 2000], [372, 2050], [382, 2120]];
@@ -93,6 +99,8 @@
     island: `<path fill="#9fb77a" d="M-14 0 C-12 -8 12 -8 14 0Z"/><path fill="${W}" d="M-5 -6 V-13 H5 V-6Z"/><path fill="${T}" d="M-6 -13 L0 -18 L6 -13Z"/><path fill="none" stroke="${S}" d="M-16 2 C-11 0 -7 4 -2 2 C3 0 7 4 12 2"/>`,
     walls: `<path fill="#b9a98a" d="M-15 0 L-8 -12 L0 -18 L8 -10 L15 0Z"/><path fill="none" stroke-width="2" stroke="${W}" d="M-13 -2 L-8 -11 L-4 -8 L0 -17 L4 -12 L8 -9 L13 -2"/><path fill="none" stroke-width="1" d="M-13 -2 L-8 -11 L-4 -8 L0 -17 L4 -12 L8 -9 L13 -2"/>`,
     tree: `<path fill="none" stroke="#8a4a2b" stroke-width="2.4" d="M0 0 V-11"/><path fill="${O}" d="M0 -30 C9 -30 14 -22 11 -15 C9 -10 3 -10 0 -11 C-3 -10 -9 -10 -11 -15 C-14 -22 -9 -30 0 -30Z"/>`,
+    bird: `<path fill="#b9a98a" d="M-13 0 L-10 -7 L-5 -10 L0 -8 L5 -12 L10 -9 L13 0Z"/><path fill="#8a4a2b" d="M0 -21 C-4 -24.5 -9 -25 -14 -23 L-12.4 -21.2 L-14.4 -20 L-10 -19.2 C-6 -18.6 -3 -18.2 0 -17 C3 -18.2 6 -18.6 10 -19.2 L14.4 -20 L12.4 -21.2 L14 -23 C9 -25 4 -24.5 0 -21Z"/><path fill="#8a4a2b" d="M-1.8 -17.6 L-1.2 -14.8 H1.2 L1.8 -17.6Z"/><circle cx="0" cy="-21.6" r="2" fill="#fbf8f1"/>`,
+    dolphin: `<path fill="#a7a58d" d="M-11 -5 C-8 -17 4 -23 11 -14 L14.5 -12.2 L11 -11.6 C6 -15 -3 -14 -8 -3Z"/><path fill="#a7a58d" d="M0 -19.4 L2.4 -23.6 L4.6 -18.2Z M-9.6 -4.4 L-14.6 -6.2 L-12.4 -2.6 L-13.2 0.6Z"/><circle cx="7.4" cy="-15.2" r=".9" fill="${INK}" stroke="none"/><path fill="none" stroke="${S}" d="M-15 3 C-10 1 -6 5 -1 3 C4 1 8 5 13 3"/>`,
     citywalls: `<path fill="${W}" d="M-16 0 V-10 H-9 V-13 H-6 V-10 H6 V-13 H9 V-10 H16 V0Z"/><path fill="${W}" d="M-3 -10 V-22 C-3 -25 5 -25 5 -22 V-10Z"/><path fill="none" d="M-3 -22 H5 M-3 -19 V-22 M1 -19 V-22 M5 -19 V-22"/><path fill="none" d="M1 -25 V-31"/><path fill="${T}" d="M1 -31 L7 -29 L1 -27Z"/>`
   };
 
@@ -122,7 +130,7 @@
   /** Rendert den Kartenausschnitt des Levels in host. onPick(chapterId) beim Antippen eines Ortes. */
   function render(host, level, onPick) {
     const [y0, y1] = CROP[level] || [0, 2100];
-    const h = y1 - y0;
+    const h = y1 - y0, seaY = SEA_Y[level] != null ? SEA_Y[level] : y0 + h * .55;
     const cur = currentIndex(level);
     const land = COAST.map(p => p);
     const landPath = catmull(land) + ` L420 ${land[land.length - 1][1]} L420 -40 Z`;
@@ -133,7 +141,7 @@
     }
     const stations = STATIONS.map((s, i) => {
       if (stationLevel(i) !== level) return "";
-      const st = stationState(i, level), labelX = s.side === "l" ? -14 : 14, anchor = s.side === "l" ? "end" : "start";
+      const st = stationState(i, level), labelX = s.labelSide === "l" ? -14 : 14, anchor = s.labelSide === "l" ? "end" : "start";
       const markX = s.side === "l" ? -30 : 30;
       return `<g class="station ${st}${i === cur ? " current" : ""}" data-chapter="${s.id}" transform="translate(${s.x} ${s.y})" tabindex="0" role="button" aria-label="${s.name}: ${st === "done" ? "abgeschlossen" : st === "locked" ? "noch gesperrt" : "offen"}">
         <g class="landmark" transform="translate(${markX} -6)" filter="url(#ink)" stroke="${INK}" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round">${MARKS[s.mark] || MARKS.tower}</g>
@@ -149,8 +157,8 @@
         <path class="coastline" d="${catmull(land)}" filter="url(#ink)"/>
         ${ISLANDS.map((isl, i) => `<path class="land island" d="${islandPath(isl, i + 1)}" filter="url(#paint)"/><path class="coastline" d="${islandPath(isl, i + 1)}" filter="url(#ink)"/>`).join("")}
         <path class="route" d="${ROUTE_PATH}"/>
-        <path class="routeDone" d="${ROUTE_PATH}" style="stroke-dasharray:${routeDoneLength(cur)} 99999"/>
-        <text class="seaName" x="40" y="${y0 + h * .55}" transform="rotate(-72 40 ${y0 + h * .55})">Jadransko more</text>
+        <path class="routeDone" d="${ROUTE_PATH}" style="${routeDoneStyle(cur, level)}"/>
+        <text class="seaName" x="40" y="${seaY}" transform="rotate(-72 40 ${seaY})">Jadransko more</text>
         ${stations}
       </svg>
       <div class="valaMarker" aria-hidden="true">${Vala.svg({ mood: "idle" })}</div>
@@ -194,8 +202,12 @@
     return LENS;
   }
   const routeLengthTo = i => lens()[i];
-  function routeDoneLength(cur) {
-    try { return Math.max(0, routeLengthTo(cur)).toFixed(0); } catch (e) { return 0; }
+  // Erledigte Strecke auf der Karte eines Levels: vom ersten Ort des Levels bis zu Valas Ort (frühere Levels bleiben gestrichelt)
+  function routeDoneStyle(cur, level) {
+    try {
+      const from = routeLengthTo(STATIONS.findIndex((s, i) => stationLevel(i) === level));
+      return `stroke-dasharray:${Math.max(0, routeLengthTo(cur) - from).toFixed(0)} 99999;stroke-dashoffset:${(-from).toFixed(0)}`;
+    } catch (e) { return "stroke-dasharray:0 99999"; }
   }
 
   function placeVala(map, s, y0, h) {
